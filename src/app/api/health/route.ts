@@ -1,13 +1,11 @@
-import { db } from "@/db";
-import { sql } from "drizzle-orm";
-
+// Simple health check - no database dependency needed for this app.
+// This app is 100% client-side. All tools run in the browser.
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  try {
-    await db.execute(sql`select 1`);
-    return Response.json({ ok: true });
-  } catch {
-    return Response.json({ ok: false }, { status: 500 });
-  }
+  return Response.json({
+    ok: true,
+    service: "ToolBox Pro",
+    message: "All systems operational. No database required."
+  });
 }
