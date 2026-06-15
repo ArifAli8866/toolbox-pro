@@ -1,110 +1,146 @@
-# 🚀 ToolBox Pro
-
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:6366f1,100:8b5cf6&height=250&section=header&text=ToolBox%20Pro&fontSize=60&fontColor=ffffff&animation=fadeIn"/>
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&height=300&color=0:06b6d4,50:6366f1,100:8b5cf6&text=ToolBox%20Pro&fontSize=65&fontColor=ffffff&animation=fadeIn&fontAlignY=38"/>
 
-### ⚡ All-in-One Browser-Based Toolkit
+# 🚀 ToolBox Pro
 
-**Convert • Compress • Download • Generate • Encode • Format**
-
-<p align="center">
-  <img src="https://img.shields.io/github/stars/YOUR_USERNAME/toolbox-pro?style=for-the-badge&color=yellow">
-  <img src="https://img.shields.io/github/forks/YOUR_USERNAME/toolbox-pro?style=for-the-badge&color=blue">
-  <img src="https://img.shields.io/github/license/YOUR_USERNAME/toolbox-pro?style=for-the-badge&color=green">
-  <img src="https://img.shields.io/github/deployments/YOUR_USERNAME/toolbox-pro/production?style=for-the-badge&label=DEPLOYED">
-</p>
+### ⚡ Modern All-In-One Browser Toolkit
 
 <p align="center">
-  <a href="https://your-demo-link.vercel.app">
-    <img src="https://img.shields.io/badge/🌐_Live_Demo-Visit_Now-blueviolet?style=for-the-badge">
-  </a>
+Convert • Compress • Download • Generate • Encode • Format
 </p>
 
-### 🔒 100% Privacy Focused
+<br>
 
-✅ No Uploads
-✅ No Servers
-✅ No Tracking
-✅ No File Size Limits
-✅ Everything Runs In Your Browser
+<img src="https://readme-typing-svg.demolab.com?font=Inter&weight=600&size=28&pause=1000&color=6366F1&center=true&vCenter=true&width=800&lines=15%2B+Powerful+Online+Tools;100%25+Browser+Based;No+Uploads+Required;Privacy+Focused;Free+Forever"/>
+
+<br>
+
+<p align="center">
+
+<img src="https://img.shields.io/github/stars/YOUR_USERNAME/toolbox-pro?style=for-the-badge&logo=github&color=yellow"/>
+
+<img src="https://img.shields.io/github/forks/YOUR_USERNAME/toolbox-pro?style=for-the-badge&logo=github&color=blue"/>
+
+<img src="https://img.shields.io/github/license/YOUR_USERNAME/toolbox-pro?style=for-the-badge&color=green"/>
+
+<img src="https://img.shields.io/github/repo-size/YOUR_USERNAME/toolbox-pro?style=for-the-badge&color=orange"/>
+
+</p>
+
+<br>
+
+<a href="https://your-vercel-app.vercel.app">
+<img src="https://img.shields.io/badge/LIVE_DEMO-6366F1?style=for-the-badge&logo=vercel&logoColor=white"/>
+</a>
+
+<a href="#">
+<img src="https://img.shields.io/badge/DOCUMENTATION-06B6D4?style=for-the-badge&logo=gitbook&logoColor=white"/>
+</a>
+
+</div>
 
 ---
 
-## 📸 Screenshots
+# ✨ Why ToolBox Pro?
 
-### Homepage
+<table>
+<tr>
+<td width="50%">
 
-![Homepage](https://via.placeholder.com/1200x700.png?text=ToolBox+Pro+Homepage)
+### 🔒 Privacy First
 
-### File Converter
+* No file uploads
+* No tracking
+* No cloud processing
+* No data collection
 
-![Converter](https://via.placeholder.com/1200x700.png?text=File+Converter)
+</td>
 
-### Developer Tools
+<td width="50%">
 
-![Developer Tools](https://via.placeholder.com/1200x700.png?text=Developer+Tools)
+### ⚡ Lightning Fast
+
+* Instant processing
+* Browser powered
+* No waiting queues
+* No rate limits
+
+</td>
+</tr>
+</table>
 
 ---
 
-# ✨ Features
+# 🎥 Demo
+
+<p align="center">
+
+<img width="100%" src="https://user-images.githubusercontent.com/demo/demo.gif"/>
+
+</p>
+
+---
+
+# 🛠 Feature Collection
+
+<table>
+<tr>
+
+<td align="center">
 
 ## 📁 File Tools
 
-| Tool                 | Description                          |
-| -------------------- | ------------------------------------ |
-| 🖼 File Converter    | PNG, JPG, WEBP, BMP, GIF conversions |
-| 📄 PDF Toolkit       | Merge, Split, Rotate, Extract Pages  |
-| 🖼 ➜ 📄 Image to PDF | Convert images into PDF documents    |
-| 📦 Compressor        | Compress images & PDFs               |
-| ⬇️ Media Downloader  | Download videos & images             |
+🖼 File Converter
 
----
+📄 PDF Toolkit
+
+📦 Compressor
+
+⬇️ Downloader
+
+🖼 Image → PDF
+
+</td>
+
+<td align="center">
 
 ## 💻 Developer Tools
 
-| Tool              | Description                     |
-| ----------------- | ------------------------------- |
-| 🔧 JSON Formatter | Format, validate, minify JSON   |
-| 🔤 Case Converter | 12 Text Case Conversions        |
-| 📊 Word Counter   | Words, characters, reading time |
-| 🔐 Hash Generator | SHA-256, SHA-1, MD5             |
-| 📦 Base64 Encoder | Encode & decode text/files      |
+🔧 JSON Formatter
+
+🔤 Case Converter
+
+📊 Word Counter
+
+🔐 Hash Generator
+
+📦 Base64 Encoder
+
+</td>
+
+<td align="center">
+
+## ⚡ Utilities
+
+🔑 Password Generator
+
+📱 QR Generator
+
+🎨 Palette Generator
+
+🖼 SVG Converter
+
+📐 More Coming Soon
+
+</td>
+
+</tr>
+</table>
 
 ---
 
-## ⚡ Utility Tools
-
-| Tool                       | Description                          |
-| -------------------------- | ------------------------------------ |
-| 🔑 Password Generator      | Strong passwords with strength meter |
-| 📱 QR Generator            | Downloadable QR codes                |
-| 🎨 Color Palette Generator | HEX / RGB / HSL palettes             |
-| 🖼 SVG to PNG              | Vector to raster conversion          |
-
----
-
-# 🏗 Architecture
-
-```text
-Browser
-   │
-   ▼
-Next.js App
-   │
-   ├── File Processing
-   ├── PDF Processing
-   ├── Text Utilities
-   ├── Media Utilities
-   └── Developer Tools
-
-All Processing Happens Locally
-No Data Leaves User Device
-```
-
----
-
-# 🛠 Tech Stack
+# 🏗 Tech Stack
 
 <p align="center">
 
@@ -112,137 +148,137 @@ No Data Leaves User Device
 
 </p>
 
-| Technology      | Purpose            |
-| --------------- | ------------------ |
-| Next.js 16      | Frontend Framework |
-| TypeScript      | Type Safety        |
-| Tailwind CSS v4 | Styling            |
-| Lucide React    | Icons              |
-| pdf-lib         | PDF Processing     |
-| qrcode          | QR Code Generation |
-
 ---
 
-# 📊 Project Stats
+# 📊 GitHub Analytics
 
 <p align="center">
 
-<img src="https://github-readme-stats.vercel.app/api?username=YOUR_USERNAME&show_icons=true&theme=tokyonight"/>
+<img width="49%" src="https://github-readme-stats.vercel.app/api?username=YOUR_USERNAME&show_icons=true&theme=tokyonight&hide_border=true"/>
 
-<img src="https://github-readme-streak-stats.herokuapp.com/?user=YOUR_USERNAME&theme=tokyonight"/>
+<img width="49%" src="https://github-readme-streak-stats.herokuapp.com/?user=YOUR_USERNAME&theme=tokyonight&hide_border=true"/>
+
+</p>
+
+<p align="center">
+
+<img width="98%" src="https://github-readme-activity-graph.vercel.app/graph?username=YOUR_USERNAME&theme=tokyo-night"/>
 
 </p>
 
 ---
 
-# 🚀 Quick Start
+# 📈 Project Roadmap
 
-## Clone Repository
+```mermaid
+graph LR
+
+A[Launch MVP]
+--> B[PDF Tools]
+
+B
+--> C[Media Downloader]
+
+C
+--> D[Developer Tools]
+
+D
+--> E[AI Features]
+
+E
+--> F[Mobile App]
+```
+
+---
+
+# 🏛 Architecture
+
+```mermaid
+graph TD
+
+User
+--> Browser
+
+Browser
+--> NextJS
+
+NextJS
+--> FileTools
+
+NextJS
+--> PDFTools
+
+NextJS
+--> DeveloperTools
+
+NextJS
+--> UtilityTools
+
+FileTools
+--> LocalProcessing
+
+PDFTools
+--> LocalProcessing
+
+DeveloperTools
+--> LocalProcessing
+
+UtilityTools
+--> LocalProcessing
+```
+
+---
+
+# 🚀 Quick Start
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/toolbox-pro.git
+
 cd toolbox-pro
-```
 
-## Install Dependencies
-
-```bash
 npm install
-```
 
-## Start Development Server
-
-```bash
 npm run dev
 ```
 
-Open:
-
-```bash
-http://localhost:3000
-```
-
 ---
 
-# 🌐 Deployment
+# 🌎 Visitor Counter
 
-## Deploy to Vercel
+<p align="center">
 
-```bash
-npm install -g vercel
-vercel
-```
+<img src="https://komarev.com/ghpvc/?username=YOUR_USERNAME&label=Repository+Views&color=6366f1&style=for-the-badge"/>
 
-Or simply click:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import)
-
----
-
-# 📂 Project Structure
-
-```bash
-toolbox-pro/
-├── app/
-├── components/
-├── public/
-├── lib/
-├── hooks/
-├── styles/
-├── package.json
-└── README.md
-```
-
----
-
-# 🎯 Why ToolBox Pro?
-
-### Unlike Other Online Tools
-
-| Feature            | ToolBox Pro | Others |
-| ------------------ | ----------- | ------ |
-| Privacy            | ✅           | ❌      |
-| Browser Processing | ✅           | ❌      |
-| No Uploads         | ✅           | ❌      |
-| Free Forever       | ✅           | ❌      |
-| Open Source        | ✅           | ❌      |
+</p>
 
 ---
 
 # 🤝 Contributing
 
-Contributions are welcome!
-
 ```bash
-fork ➜ clone ➜ develop ➜ commit ➜ pull request
+Fork ➜ Clone ➜ Develop ➜ Commit ➜ Pull Request
 ```
 
-If you find bugs or have feature requests, create an issue.
-
 ---
 
-# ⭐ Support The Project
+# ⭐ Show Your Support
 
-If this project helped you:
+If this project helps you:
 
-🌟 Star the repository
+⭐ Star the repository
 
-🍴 Fork the project
+🍴 Fork it
 
-📝 Share with others
+📝 Share it
 
----
-
-# 📜 License
-
-Licensed under the MIT License.
+🚀 Contribute
 
 ---
 
 <div align="center">
 
-### Made with ❤️ using Next.js & TypeScript
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&height=180&section=footer&color=0:06b6d4,50:6366f1,100:8b5cf6"/>
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:6366f1,100:8b5cf6&height=120&section=footer"/>
+### Made with ❤️ using Next.js & TypeScript
 
 </div>
