@@ -170,7 +170,7 @@ Convert • Compress • Download • Generate • Encode • Format
 
 # 📈 Project Roadmap
 
-```mermaid
+``mermaid
 graph LR
 
 A[Launch MVP]
@@ -187,13 +187,10 @@ D
 
 E
 --> F[Mobile App]
-```
-
----
 
 # 🏛 Architecture
 
-```mermaid
+`mermaid
 graph TD
 
 User
@@ -225,29 +222,24 @@ DeveloperTools
 
 UtilityTools
 --> LocalProcessing
-```
-
----
 
 # 🚀 Quick Start
 
-```bash
-git clone https://github.com/YOUR_USERNAME/toolbox-pro.git
+`bash
+git clone https://github.com/ArifAli8866/toolbox-pro.git
 
 cd toolbox-pro
 
 npm install
 
 npm run dev
-```
-
----
+`
 
 # 🌎 Visitor Counter
 
 <p align="center">
 
-<img src="https://komarev.com/ghpvc/?username=YOUR_USERNAME&label=Repository+Views&color=6366f1&style=for-the-badge"/>
+<img src="https://komarev.com/ghpvc/?username=ArifAli8866&label=Repository+Views&color=6366f1&style=for-the-badge"/>
 
 </p>
 
@@ -255,12 +247,9 @@ npm run dev
 
 # 🤝 Contributing
 
-```bash
+`bash
 Fork ➜ Clone ➜ Develop ➜ Commit ➜ Pull Request
-```
-
----
-
+``
 # ⭐ Show Your Support
 
 If this project helps you:
