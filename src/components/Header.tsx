@@ -3,14 +3,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ChevronDown, FileText, Minimize2, Download, Wrench, Layers } from 'lucide-react';
+import { Menu, X, ChevronDown, FileText, Minimize2, Download, Wrench, Layers, Eraser, Camera } from 'lucide-react';
 
 const navItems = [
   { href: '/', label: 'Home' },
   { href: '/converter', label: 'Converter' },
   { href: '/compressor', label: 'Compressor' },
-  { href: '/downloader', label: 'Downloader' },
-  { href: '/text-tools', label: 'Text Tools' },
+  { href: '/image-tools', label: 'Image AI' },
+  { href: '/more-tools', label: 'More Tools' },
   { href: '/utilities', label: 'Utilities' },
 ];
 
@@ -102,7 +102,8 @@ export default function Header() {
                     {item.href === '/converter' && <FileText className="w-4 h-4" />}
                     {item.href === '/compressor' && <Minimize2 className="w-4 h-4" />}
                     {item.href === '/downloader' && <Download className="w-4 h-4" />}
-                    {item.href === '/text-tools' && <Layers className="w-4 h-4" />}
+                    {item.href === '/image-tools' && <Eraser className="w-4 h-4" />}
+                    {item.href === '/more-tools' && <Camera className="w-4 h-4" />}
                     {item.href === '/utilities' && <Wrench className="w-4 h-4" />}
                     {item.label}
                   </Link>

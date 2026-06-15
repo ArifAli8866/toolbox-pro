@@ -1,16 +1,16 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useToast } from '@/components/Toast';
 import QRCode from 'qrcode';
 import {
   LockKeyhole, QrCode, Code2, Palette, Image, Hash, Copy, RefreshCw,
-  Shield, Download, Eye, EyeOff, Check, Upload, CheckCircle
+  Shield, Download, Eye, EyeOff, Check, Upload, CheckCircle, KeyRound, Fingerprint
 } from 'lucide-react';
 
-type UtilityTool = 'password' | 'qr' | 'base64' | 'color' | 'svg' | 'hash';
+type UtilityTool = 'password' | 'qr' | 'base64' | 'color' | 'svg' | 'hash' | 'jwt' | 'uuid';
 
 export default function UtilitiesPage() {
   const [activeTool, setActiveTool] = useState<UtilityTool>('password');
@@ -22,6 +22,8 @@ export default function UtilitiesPage() {
     { id: 'color' as const, icon: Palette, label: 'Color Palette' },
     { id: 'svg' as const, icon: Image, label: 'SVG → PNG' },
     { id: 'hash' as const, icon: Hash, label: 'Hash Gen' },
+    { id: 'jwt' as const, icon: KeyRound, label: 'JWT Decoder' },
+    { id: 'uuid' as const, icon: Fingerprint, label: 'UUID Gen' },
   ];
 
   return (
@@ -40,8 +42,9 @@ export default function UtilitiesPage() {
               <button
                 key={t.id}
                 onClick={() => setActiveTool(t.id)}
-                className={`px-4 py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${activeTool === t.id ? 'bg-white shadow-md text-brand-600' : 'text-slate-600 hover:text-slate-800'
-                  }`}
+                className={`px-4 py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                  activeTool === t.id ? 'bg-white shadow-md text-brand-600' : 'text-slate-600 hover:text-slate-800'
+                }`}
               >
                 <t.icon className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">{t.label}</span>
@@ -56,6 +59,8 @@ export default function UtilitiesPage() {
         {activeTool === 'color' && <ColorPalette />}
         {activeTool === 'svg' && <SvgToPng />}
         {activeTool === 'hash' && <HashGenerator />}
+        {activeTool === 'jwt' && <JwtDecoder />}
+        {activeTool === 'uuid' && <UuidGenerator />}
       </div>
       <Footer />
     </div>
@@ -133,10 +138,11 @@ function PasswordGenerator() {
             <h3 className="font-semibold text-slate-800">Generated Password</h3>
             <div className="flex items-center gap-2">
               {strength.label && (
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${strength.level >= 4 ? 'bg-green-100 text-green-700' :
+                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                  strength.level >= 4 ? 'bg-green-100 text-green-700' :
                   strength.level >= 3 ? 'bg-yellow-100 text-yellow-700' :
-                    'bg-red-100 text-red-700'
-                  }`}>
+                  'bg-red-100 text-red-700'
+                }`}>
                   {strength.label}
                 </span>
               )}
@@ -217,28 +223,26 @@ function QRGenerator() {
   const [text, setText] = useState('');
   const [qrImage, setQrImage] = useState<string | null>(null);
   const [size, setSize] = useState(256);
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   const generateQR = async () => {
-    if (!text.trim()) {
-      toast.warning('Enter text or URL');
-      return;
-    }
+    if (!text.trim()) { toast.warning('Enter text or URL'); return; }
+    setLoading(true);
     try {
-      // Use toDataURL directly — much more reliable
-      const dataUrl = await QRCode.toDataURL(text.trim(), {
+      // toDataURL generates the image directly — no canvas ref needed
+      const dataUrl = await QRCode.toDataURL(text, {
         width: size,
         margin: 2,
-        color: {
-          dark: '#000000',
-          light: '#FFFFFF',
-        },
+        errorCorrectionLevel: 'M',
+        color: { dark: '#1e1b4b', light: '#ffffff' },
       });
       setQrImage(dataUrl);
       toast.success('QR code generated!');
-    } catch (err) {
-      console.error('QR generation error:', err);
-      toast.error('Failed to generate QR code. Please try again.');
+    } catch {
+      toast.error('Failed to generate QR code');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -247,14 +251,10 @@ function QRGenerator() {
       const a = document.createElement('a');
       a.href = qrImage;
       a.download = 'qrcode.png';
-      document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
       toast.success('QR code downloaded!');
     }
   };
-
-  const canGenerate = text.trim().length > 0;
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -265,21 +265,12 @@ function QRGenerator() {
             type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && canGenerate) {
-                generateQR();
-              }
-            }}
             placeholder="https://example.com or any text..."
             className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
           />
         </div>
-
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="font-medium text-slate-700">Size: {size}px</label>
-            <span className="text-xs text-slate-500">{size} × {size}</span>
-          </div>
+          <label className="font-medium text-slate-700 mb-2 block">Size: {size}px</label>
           <input
             type="range"
             min={128}
@@ -287,53 +278,29 @@ function QRGenerator() {
             value={size}
             step={64}
             onChange={(e) => setSize(parseInt(e.target.value))}
-            className="w-full accent-violet-600"
+            className="w-full"
           />
         </div>
-
         <button
           onClick={generateQR}
-          disabled={!canGenerate}
-          className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 text-white font-semibold shadow-lg shadow-violet-500/25 hover:scale-[1.01] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+          disabled={loading}
+          className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 text-white font-semibold shadow-lg shadow-violet-500/25 hover:scale-[1.01] transition-all flex items-center justify-center gap-2 disabled:opacity-60"
         >
           <QrCode className="w-5 h-5" />
-          Generate QR Code
+          {loading ? 'Generating...' : 'Generate QR Code'}
         </button>
       </div>
 
       {qrImage && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 text-center animate-fade-in">
-          <div className="inline-block p-4 bg-slate-50 rounded-2xl mb-4">
-            <img
-              src={qrImage}
-              alt="Generated QR Code"
-              className="mx-auto rounded-lg"
-              style={{ width: Math.min(size, 320), height: Math.min(size, 320) }}
-            />
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <button
-              onClick={downloadQR}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 text-white font-semibold shadow hover:scale-[1.01] transition-all"
-            >
-              <Download className="w-4 h-4" />
-              Download PNG
-            </button>
-            <button
-              onClick={() => {
-                setQrImage(null);
-                setText('');
-              }}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-colors"
-            >
-              Generate New
-            </button>
-          </div>
-
-          <p className="text-xs text-slate-400 mt-4">
-            Scan with any QR code reader or camera app
-          </p>
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 text-center animate-slide-up">
+          <img src={qrImage} alt="QR Code" className="mx-auto rounded-xl mb-4 border border-slate-100" />
+          <button
+            onClick={downloadQR}
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-colors"
+          >
+            <Download className="w-4 h-4" />
+            Download PNG
+          </button>
         </div>
       )}
     </div>
@@ -755,6 +722,185 @@ function HashGenerator() {
         </div>
       )}
       <p className="text-xs text-slate-400 text-center">*MD5 is a simplified hash. For production use, use a proper MD5 library.</p>
+    </div>
+  );
+}
+
+function JwtDecoder() {
+  const [token, setToken] = useState('');
+  const [header, setHeader] = useState<any>(null);
+  const [payload, setPayload] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
+
+  const decode = () => {
+    setError(null);
+    setHeader(null);
+    setPayload(null);
+    const trimmed = token.trim();
+    if (!trimmed) { setError('Enter a JWT token'); return; }
+    const parts = trimmed.split('.');
+    if (parts.length < 2) { setError('Invalid JWT format. Expected 3 parts separated by dots.'); return; }
+    try {
+      const decodeBase64 = (s: string) => {
+        const padded = s.replace(/-/g, '+').replace(/_/g, '/');
+        const json = decodeURIComponent(escape(atob(padded)));
+        return JSON.parse(json);
+      };
+      const h = decodeBase64(parts[0]);
+      const p = decodeBase64(parts[1]);
+      setHeader(h);
+      setPayload(p);
+      toast.success('JWT decoded successfully!');
+    } catch {
+      setError('Failed to decode JWT. Invalid Base64 payload.');
+    }
+  };
+
+  const fmt = (val: any, key: string): string => {
+    if (key === 'exp' || key === 'iat' || key === 'nbf' || key === 'auth_time') {
+      try {
+        const date = new Date(val * 1000);
+        return `${val} (${date.toLocaleString()})`;
+      } catch { return String(val); }
+    }
+    return typeof val === 'object' ? JSON.stringify(val, null, 2) : String(val);
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto space-y-6">
+      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div className="px-5 py-3 border-b border-slate-200 bg-slate-50">
+          <span className="font-semibold text-sm text-slate-700 flex items-center gap-2"><KeyRound className="w-4 h-4" /> JWT Token</span>
+        </div>
+        <textarea
+          value={token}
+          onChange={(e) => setToken(e.target.value)}
+          placeholder="Paste your JWT token here (eyJhbGciOi...)"
+          className="w-full h-28 p-4 font-mono text-xs bg-white resize-none focus:outline-none placeholder:text-slate-400 break-all"
+          spellCheck={false}
+        />
+      </div>
+
+      <button
+        onClick={decode}
+        disabled={!token.trim()}
+        className="w-full max-w-xs mx-auto block py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-semibold shadow-lg shadow-indigo-500/25 disabled:opacity-50 hover:scale-[1.01] transition-all flex items-center justify-center gap-2"
+      >
+        <KeyRound className="w-4 h-4" /> Decode JWT
+      </button>
+
+      {error && <div className="text-center text-red-500 text-sm">{error}</div>}
+
+      {(header || payload) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {header && (
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden animate-slide-up">
+              <div className="px-5 py-3 bg-red-50 border-b border-red-100"><span className="font-semibold text-sm text-red-600">Header</span></div>
+              <div className="p-4 space-y-2">
+                {Object.entries(header).map(([k, v]) => (
+                  <div key={k} className="text-sm">
+                    <span className="text-slate-500 font-medium">{k}:</span> <span className="text-slate-800 font-mono break-all">{fmt(v, k)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {payload && (
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden animate-slide-up">
+              <div className="px-5 py-3 bg-purple-50 border-b border-purple-100"><span className="font-semibold text-sm text-purple-600">Payload</span></div>
+              <div className="p-4 space-y-2">
+                {Object.entries(payload).map(([k, v]) => (
+                  <div key={k} className="text-sm">
+                    <span className="text-slate-500 font-medium">{k}:</span> <span className="text-slate-800 font-mono break-all">{fmt(v, k)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+      <p className="text-xs text-slate-400 text-center">🔒 Decoding happens locally. Tokens are never sent to a server.</p>
+    </div>
+  );
+}
+
+function UuidGenerator() {
+  const [uuids, setUuids] = useState<string[]>([]);
+  const [count, setCount] = useState(5);
+  const [version, setVersion] = useState<'v4' | 'short'>('v4');
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const toast = useToast();
+
+  const generate = () => {
+    const results: string[] = [];
+    for (let i = 0; i < count; i++) {
+      if (version === 'v4') {
+        results.push(crypto.randomUUID());
+      } else {
+        // Short ID (12 chars)
+        const arr = new Uint8Array(6);
+        crypto.getRandomValues(arr);
+        results.push(Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join(''));
+      }
+    }
+    setUuids(results);
+    setCopiedIndex(null);
+    toast.success(`Generated ${count} ${version === 'v4' ? 'UUID v4' : 'short ID'}s!`);
+  };
+
+  const copyUuid = (uuid: string, index: number) => {
+    navigator.clipboard.writeText(uuid);
+    setCopiedIndex(index);
+    setTimeout(() => setCopiedIndex(null), 1500);
+    toast.success('Copied!');
+  };
+
+  const copyAll = () => {
+    navigator.clipboard.writeText(uuids.join('\n'));
+    toast.success('All copied to clipboard!');
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto space-y-6">
+      <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-5">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="font-medium text-slate-700 mb-2 block">Count</label>
+            <input type="number" min={1} max={100} value={count} onChange={(e) => setCount(Math.min(100, Math.max(1, parseInt(e.target.value) || 1)))} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500" />
+          </div>
+          <div>
+            <label className="font-medium text-slate-700 mb-2 block">Type</label>
+            <select value={version} onChange={(e) => setVersion(e.target.value as 'v4' | 'short')} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 bg-white">
+              <option value="v4">UUID v4 (Standard)</option>
+              <option value="short">Short ID (12 chars)</option>
+            </select>
+          </div>
+        </div>
+        <button
+          onClick={generate}
+          className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 text-white font-semibold shadow-lg shadow-emerald-500/25 hover:scale-[1.01] transition-all flex items-center justify-center gap-2"
+        >
+          <Fingerprint className="w-4 h-4" /> Generate {count} {version === 'v4' ? 'UUIDs' : 'Short IDs'}
+        </button>
+      </div>
+
+      {uuids.length > 0 && (
+        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden animate-slide-up">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200 bg-slate-50">
+            <span className="font-semibold text-sm text-slate-700">{uuids.length} Generated</span>
+            <button onClick={copyAll} className="text-xs text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1"><Copy className="w-3 h-3" /> Copy all</button>
+          </div>
+          <div className="divide-y divide-slate-100">
+            {uuids.map((uuid, i) => (
+              <button key={i} onClick={() => copyUuid(uuid, i)} className="w-full flex items-center justify-between px-5 py-3 hover:bg-slate-50 transition-colors group">
+                <code className="text-sm font-mono text-slate-800 break-all">{uuid}</code>
+                {copiedIndex === i ? <Check className="w-4 h-4 text-green-500 flex-shrink-0 ml-3" /> : <Copy className="w-4 h-4 text-slate-300 group-hover:text-brand-500 flex-shrink-0 ml-3" />}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

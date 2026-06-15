@@ -9,9 +9,9 @@ import { formatFileSize } from '@/lib/imageCompressor';
 import { mergePDFs, extractPDFPages, splitPDF, rotatePDFPages, compressPDF, getPDFPageCount } from '@/lib/pdfUtils';
 import { imageToPdf } from '@/lib/pdfConverter';
 import { saveAs } from 'file-saver';
-import { Upload, Download, FileText, Image, ArrowLeftRight, Layers, Scissors, RotateCw, FileMinus, Loader2, X, Check } from 'lucide-react';
+import { Upload, Download, FileText, Image, ArrowLeftRight, Layers, Scissors, RotateCw, FileMinus, Loader2, X, Check, Lock } from 'lucide-react';
 
-type ConversionMode = 'image' | 'pdf-merge' | 'pdf-split' | 'pdf-extract' | 'pdf-rotate' | 'pdf-compress' | 'image-to-pdf';
+type ConversionMode = 'image' | 'pdf-merge' | 'pdf-split' | 'pdf-extract' | 'pdf-rotate' | 'pdf-compress' | 'image-to-pdf' | 'pdf-password';
 
 export default function ConverterPage() {
   return (
@@ -32,6 +32,7 @@ function ConverterContent() {
   const [extractEnd, setExtractEnd] = useState(1);
   const [rotation, setRotation] = useState(90);
   const [pdfPageCount, setPdfPageCount] = useState<number | null>(null);
+  const [pdfPassword, setPdfPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
 
@@ -118,6 +119,14 @@ function ConverterContent() {
         const compressed = await compressPDF(files[0]);
         saveAs(uint8ToBlob(compressed, 'application/pdf'), files[0].name);
         setResult({ name: files[0].name, size: compressed.length });
+      } else if (mode === 'pdf-password') {
+        if (!pdfPassword) { setError('Please enter a password'); setConverting(false); return; }
+        const { encryptPDF } = await import('@pdfsmaller/pdf-encrypt-lite');
+        const pdfBytes = new Uint8Array(await files[0].arrayBuffer());
+        const encryptedBytes = await encryptPDF(pdfBytes, pdfPassword);
+        const name = files[0].name.replace(/\.[^.]+$/, '') + '_protected.pdf';
+        saveAs(uint8ToBlob(encryptedBytes as Uint8Array, 'application/pdf'), name);
+        setResult({ name, size: (encryptedBytes as Uint8Array).length });
       }
     } catch (err: any) {
       setError(err.message || 'Conversion failed');
@@ -134,6 +143,7 @@ function ConverterContent() {
     { id: 'pdf-split' as const, icon: FileMinus, label: 'Split PDF', desc: 'Split into individual pages' },
     { id: 'pdf-rotate' as const, icon: RotateCw, label: 'Rotate PDF', desc: 'Rotate all pages' },
     { id: 'pdf-compress' as const, icon: ArrowLeftRight, label: 'Optimize PDF', desc: 'Re-compress PDF' },
+    { id: 'pdf-password' as const, icon: Lock, label: 'Protect PDF', desc: 'Add password encryption' },
   ];
 
   return (
@@ -235,6 +245,24 @@ function ConverterContent() {
                 </button>
               ))}
             </div>
+          </div>
+        )}
+
+        {mode === 'pdf-password' && (
+          <div className="bg-white rounded-xl border border-slate-200 p-6 mb-6">
+            <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
+              <Lock className="w-4 h-4" /> Password Protection
+            </h3>
+            <input
+              type="text"
+              value={pdfPassword}
+              onChange={(e) => setPdfPassword(e.target.value)}
+              placeholder="Enter a password..."
+              className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            />
+            <p className="text-xs text-slate-500 mt-2">
+              Uses 256-bit AES encryption. Anyone opening the PDF will need this password.
+            </p>
           </div>
         )}
 

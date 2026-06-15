@@ -8,12 +8,12 @@ import {
   FileText, Minimize2, Download, ArrowRight, Zap, Shield, Globe,
   Code2, Type, Palette, Hash, Image, LockKeyhole, QrCode,
   Braces, FileType, Check, Star, Users, BarChart3, Sparkles,
-  ChevronDown, Layers
+  ChevronDown, Layers, Eraser, ScanText, Camera, Coins, KeyRound, Fingerprint
 } from 'lucide-react';
 
 const stats = [
   { icon: Users, value: '150K+', label: 'Files Processed' },
-  { icon: BarChart3, value: '15+', label: 'Free Tools' },
+  { icon: BarChart3, value: '23+', label: 'Free Tools' },
   { icon: Shield, value: '100%', label: 'Private & Secure' },
   { icon: Zap, value: '0ms', label: 'Upload Time' },
 ];
@@ -48,6 +48,29 @@ const tools = [
         gradient: 'from-purple-500 to-pink-500',
         badge: null,
         features: ['YouTube/TikTok', 'Direct Links', 'No Login'],
+      },
+    ],
+  },
+  {
+    category: 'AI Image Tools',
+    items: [
+      {
+        title: 'Background Remover',
+        description: 'AI-powered background removal. Upload any image and get a transparent PNG instantly — 100% in your browser.',
+        href: '/image-tools',
+        icon: Eraser,
+        gradient: 'from-fuchsia-500 to-pink-500',
+        badge: 'AI',
+        features: ['AI Powered', 'Transparent PNG', 'No Upload'],
+      },
+      {
+        title: 'Image to Text (OCR)',
+        description: 'Extract text from screenshots, scanned documents, and photos. Powered by Tesseract OCR engine.',
+        href: '/image-tools',
+        icon: ScanText,
+        gradient: 'from-sky-500 to-blue-500',
+        badge: null,
+        features: ['Multi-language', 'Editable Text', 'Copy Result'],
       },
     ],
   },
@@ -139,6 +162,56 @@ const tools = [
         gradient: 'from-emerald-500 to-green-500',
         badge: null,
         features: ['MD5/SHA-1/SHA-256', 'Text Input', 'Copy Result'],
+      },
+      {
+        title: 'JWT Decoder',
+        description: 'Decode and inspect JSON Web Tokens. View header and payload with human-readable timestamps.',
+        href: '/utilities#jwt',
+        icon: KeyRound,
+        gradient: 'from-indigo-500 to-blue-500',
+        badge: null,
+        features: ['Header & Payload', 'Timestamps', '100% Local'],
+      },
+      {
+        title: 'UUID Generator',
+        description: 'Generate UUID v4 and short IDs in bulk. Perfect for database keys and unique identifiers.',
+        href: '/utilities#uuid',
+        icon: Fingerprint,
+        gradient: 'from-cyan-500 to-teal-500',
+        badge: null,
+        features: ['UUID v4', 'Short IDs', 'Bulk Generate'],
+      },
+    ],
+  },
+  {
+    category: 'More Tools',
+    items: [
+      {
+        title: 'Website Screenshot',
+        description: 'Capture full-page screenshots of any website. Download as PNG or copy the image URL.',
+        href: '/more-tools#screenshot',
+        icon: Camera,
+        gradient: 'from-rose-500 to-pink-500',
+        badge: null,
+        features: ['Any Website', 'PNG Download', 'URL Copy'],
+      },
+      {
+        title: 'Currency & Unit Converter',
+        description: 'Live currency exchange rates plus length, weight, temperature, area, volume, and speed conversions.',
+        href: '/more-tools#currency',
+        icon: Coins,
+        gradient: 'from-amber-500 to-yellow-500',
+        badge: null,
+        features: ['150+ Currencies', '6 Unit Types', 'Live Rates'],
+      },
+      {
+        title: 'Markdown Previewer',
+        description: 'Write markdown with live HTML preview. GitHub-flavored markdown with tables, code blocks, and more.',
+        href: '/more-tools#markdown',
+        icon: Layers,
+        gradient: 'from-violet-500 to-indigo-500',
+        badge: null,
+        features: ['Live Preview', 'GFM Support', 'Export HTML'],
       },
     ],
   },
@@ -371,8 +444,56 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== TEXT & CODE TOOLS ===== */}
+      {/* ===== AI IMAGE TOOLS ===== */}
       <section className="bg-white border-y border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-fuchsia-100 text-fuchsia-700 text-xs font-semibold mb-4 uppercase tracking-wide">
+              ✨ AI Powered
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4">AI Image Tools</h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Remove backgrounds and extract text from images using AI — all running privately in your browser.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {tools[1].items.map((tool, i) => (
+            <Link
+              key={tool.href}
+              href={tool.href}
+              className="group relative bg-slate-50 rounded-2xl border border-slate-200 p-8 hover:bg-white hover:shadow-xl hover:border-fuchsia-200 hover:-translate-y-1 transition-all duration-300 animate-slide-up"
+              style={{ animationDelay: `${i * 0.1}s` }}
+            >
+              {tool.badge && (
+                <span className="absolute top-4 right-4 px-3 py-1 rounded-full bg-gradient-to-r from-fuchsia-600 to-pink-600 text-white text-xs font-bold shadow-md">
+                  {tool.badge}
+                </span>
+              )}
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tool.gradient} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
+                <tool.icon className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">{tool.title}</h3>
+              <p className="text-sm text-slate-600 mb-5 leading-relaxed">{tool.description}</p>
+              <div className="space-y-2">
+                {tool.features.map((f) => (
+                  <div key={f} className="flex items-center gap-2 text-xs text-slate-500">
+                    <Check className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
+                    {f}
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 flex items-center gap-1 text-sm font-semibold text-fuchsia-600 group-hover:gap-2 transition-all">
+                Use Tool <ArrowRight className="w-4 h-4" />
+              </div>
+            </Link>
+          ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== TEXT & CODE TOOLS ===== */}
+      <section>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-100 text-purple-700 text-xs font-semibold mb-4 uppercase tracking-wide">
@@ -385,7 +506,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {tools[1].items.map((tool, i) => (
+          {tools[2].items.map((tool, i) => (
               <Link
                 key={tool.href}
                 href={tool.href}
@@ -418,8 +539,8 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tools[2].items.map((tool, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {tools[3].items.map((tool, i) => (
             <Link
               key={tool.href}
               href={tool.href}
@@ -446,6 +567,49 @@ export default function HomePage() {
               </div>
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* ===== MORE TOOLS ===== */}
+      <section className="bg-white border-y border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold mb-4 uppercase tracking-wide">
+              More Tools
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4">Productivity Tools</h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Screenshots, currency converters, and markdown editors — boost your daily workflow.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {tools[4].items.map((tool, i) => (
+              <Link
+                key={tool.href}
+                href={tool.href}
+                className="group bg-slate-50 rounded-2xl border border-slate-200 p-8 hover:bg-white hover:shadow-xl hover:border-amber-200 hover:-translate-y-1 transition-all duration-300 animate-slide-up"
+                style={{ animationDelay: `${i * 0.1}s` }}
+              >
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tool.gradient} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
+                  <tool.icon className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 mb-2">{tool.title}</h3>
+                <p className="text-sm text-slate-600 mb-5 leading-relaxed">{tool.description}</p>
+                <div className="space-y-2">
+                  {tool.features.map((f) => (
+                    <div key={f} className="flex items-center gap-2 text-xs text-slate-500">
+                      <Check className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
+                      {f}
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-6 flex items-center gap-1 text-sm font-semibold text-amber-600 group-hover:gap-2 transition-all">
+                  Use Tool <ArrowRight className="w-4 h-4" />
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 

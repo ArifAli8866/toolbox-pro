@@ -1,7 +1,5 @@
 {
-  "name": "toolbox-pro",
-  "version": "1.0.0",
-  "description": "Free online tools for file conversion, compression, media downloading, text formatting, and utilities. All processing happens in your browser.",
+  "name": "nextjs-postgresql-template",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -11,18 +9,24 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@imgly/background-removal": "^1.7.0",
+    "@pdfsmaller/pdf-encrypt-lite": "^1.0.2",
+    "@types/dompurify": "^3.0.5",
     "@types/file-saver": "^2.0.7",
     "@types/qrcode": "^1.5.6",
+    "dompurify": "^3.4.10",
     "dotenv": "17.3.1",
     "drizzle-orm": "0.45.2",
     "file-saver": "^2.0.5",
     "lucide-react": "^1.18.0",
+    "marked": "^18.0.5",
     "next": "16.2.6",
     "pdf-lib": "^1.17.1",
     "pg": "8.20.0",
     "qrcode": "^1.5.4",
     "react": "19.2.6",
-    "react-dom": "19.2.6"
+    "react-dom": "19.2.6",
+    "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.1.17",
