@@ -171,35 +171,24 @@ Everything runs directly in your browser.
 
 </p>
 
----
+flowchart LR
 
-# ☁️ Architecture Diagram
+A((👤 User)) --> B((🌐 Browser))
 
-``mermaid
-graph TD
-A[👤 User]
+B --> C{{⚡ ToolBox Pro}}
 
---> B[🌐 Browser]
+C --> D[📁 File System Tools]
+C --> E[📄 PDF Engine]
+C --> F[💻 Dev Utilities]
+C --> G[⚡ Productivity Tools]
 
-B --> C[⚡ Next.js App]
-
-C --> D[📁 File Tools]
-
-C --> E[📄 PDF Tools]
-
-C --> F[💻 Developer Tools]
-
-C --> G[⚡ Utility Tools]
-
-D --> H[🔒 Local Processing]
-
+D --> H[(🔒 Local Browser Processing)]
 E --> H
-
 F --> H
-
 G --> H
 
-H --> I[✅ No Upload Required]
+H --> I[[🚫 No Uploads]]
+I --> J[[🚀 Instant Results]]
 ``
 # 🎯 Why Choose ToolBox Pro?
 
