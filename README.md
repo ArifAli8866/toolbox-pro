@@ -161,34 +161,27 @@ Everything runs directly in your browser.
 
 </p>
 
----
+``mermaid
+flowchart TB
 
-# 🏆 GitHub Trophies
+A((👤 User))
+B((🌐 Browser))
+C{{⚡ ToolBox Pro Core}}
 
-<p align="center">
+A --> B --> C
 
-<img src="https://github-profile-trophy.vercel.app/?username=ArifAli8866&theme=tokyonight&row=2&column=4&no-frame=true"/>
-
-</p>
-
-flowchart LR
-
-A((👤 User)) --> B((🌐 Browser))
-
-B --> C{{⚡ ToolBox Pro}}
-
-C --> D[📁 File System Tools]
+C --> D[📁 File Tools]
 C --> E[📄 PDF Engine]
-C --> F[💻 Dev Utilities]
-C --> G[⚡ Productivity Tools]
+C --> F[💻 Developer Tools]
+C --> G[⚡ Utilities]
 
-D --> H[(🔒 Local Browser Processing)]
+D --> H[(🔒 Local Processing)]
 E --> H
 F --> H
 G --> H
 
 H --> I[[🚫 No Uploads]]
-I --> J[[🚀 Instant Results]]
+I --> J[[⚡ Instant Results]]
 ``
 # 🎯 Why Choose ToolBox Pro?
 
