@@ -59,9 +59,9 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-slate-800 mb-4">Contact</h4>
             <ul className="space-y-2.5">
-              <li><a href="#" className="text-sm text-slate-500 hover:text-brand-600 transition-colors">Support</a></li>
-              <li><a href="#" className="text-sm text-slate-500 hover:text-brand-600 transition-colors">GitHub</a></li>
-              <li><a href="#" className="text-sm text-slate-500 hover:text-brand-600 transition-colors">Twitter</a></li>
+              <li><a href="https://www.linkedin.com/in/arif-ali-23a38032a/" className="text-sm text-slate-500 hover:text-brand-600 transition-colors">Support</a></li>
+              <li><a href="https://github.com/ArifAli8866" className="text-sm text-slate-500 hover:text-brand-600 transition-colors">GitHub</a></li>
+              <li><a href="https://x.com/arifali8866" className="text-sm text-slate-500 hover:text-brand-600 transition-colors">Twitter</a></li>
             </ul>
           </div>
         </div>
@@ -70,7 +70,7 @@ export default function Footer() {
         <div className="border-t border-slate-200 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-slate-400">© 2026 ToolBox Pro. All rights reserved.</p>
           <p className="text-sm text-slate-400 flex items-center gap-1">
-            Made with <span className="text-red-500">♥</span> — All processing in your browser
+            Made with <span className="text-red-500">♥</span> Arif Ali — All processing in your browser
           </p>
         </div>
       </div>
