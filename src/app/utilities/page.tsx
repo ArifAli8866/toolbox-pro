@@ -40,9 +40,8 @@ export default function UtilitiesPage() {
               <button
                 key={t.id}
                 onClick={() => setActiveTool(t.id)}
-                className={`px-4 py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${
-                  activeTool === t.id ? 'bg-white shadow-md text-brand-600' : 'text-slate-600 hover:text-slate-800'
-                }`}
+                className={`px-4 py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${activeTool === t.id ? 'bg-white shadow-md text-brand-600' : 'text-slate-600 hover:text-slate-800'
+                  }`}
               >
                 <t.icon className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">{t.label}</span>
@@ -134,11 +133,10 @@ function PasswordGenerator() {
             <h3 className="font-semibold text-slate-800">Generated Password</h3>
             <div className="flex items-center gap-2">
               {strength.label && (
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                  strength.level >= 4 ? 'bg-green-100 text-green-700' :
+                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${strength.level >= 4 ? 'bg-green-100 text-green-700' :
                   strength.level >= 3 ? 'bg-yellow-100 text-yellow-700' :
-                  'bg-red-100 text-red-700'
-                }`}>
+                    'bg-red-100 text-red-700'
+                  }`}>
                   {strength.label}
                 </span>
               )}
@@ -219,19 +217,28 @@ function QRGenerator() {
   const [text, setText] = useState('');
   const [qrImage, setQrImage] = useState<string | null>(null);
   const [size, setSize] = useState(256);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const toast = useToast();
 
   const generateQR = async () => {
-    if (!text.trim()) { toast.warning('Enter text or URL'); return; }
+    if (!text.trim()) {
+      toast.warning('Enter text or URL');
+      return;
+    }
     try {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      await QRCode.toCanvas(canvas, text, { width: size, margin: 2 });
-      setQrImage(canvas.toDataURL('image/png'));
+      // Use toDataURL directly — much more reliable
+      const dataUrl = await QRCode.toDataURL(text.trim(), {
+        width: size,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF',
+        },
+      });
+      setQrImage(dataUrl);
       toast.success('QR code generated!');
-    } catch {
-      toast.error('Failed to generate QR code');
+    } catch (err) {
+      console.error('QR generation error:', err);
+      toast.error('Failed to generate QR code. Please try again.');
     }
   };
 
@@ -240,10 +247,14 @@ function QRGenerator() {
       const a = document.createElement('a');
       a.href = qrImage;
       a.download = 'qrcode.png';
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
       toast.success('QR code downloaded!');
     }
   };
+
+  const canGenerate = text.trim().length > 0;
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -254,12 +265,21 @@ function QRGenerator() {
             type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && canGenerate) {
+                generateQR();
+              }
+            }}
             placeholder="https://example.com or any text..."
             className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
           />
         </div>
+
         <div>
-          <label className="font-medium text-slate-700 mb-2 block">Size: {size}px</label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="font-medium text-slate-700">Size: {size}px</label>
+            <span className="text-xs text-slate-500">{size} × {size}</span>
+          </div>
           <input
             type="range"
             min={128}
@@ -267,12 +287,14 @@ function QRGenerator() {
             value={size}
             step={64}
             onChange={(e) => setSize(parseInt(e.target.value))}
-            className="w-full"
+            className="w-full accent-violet-600"
           />
         </div>
+
         <button
           onClick={generateQR}
-          className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 text-white font-semibold shadow-lg shadow-violet-500/25 hover:scale-[1.01] transition-all flex items-center justify-center gap-2"
+          disabled={!canGenerate}
+          className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 text-white font-semibold shadow-lg shadow-violet-500/25 hover:scale-[1.01] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
           <QrCode className="w-5 h-5" />
           Generate QR Code
@@ -280,16 +302,38 @@ function QRGenerator() {
       </div>
 
       {qrImage && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 text-center">
-          <img src={qrImage} alt="QR Code" className="mx-auto rounded-xl mb-4 border border-slate-100" />
-          <canvas ref={canvasRef} className="hidden" />
-          <button
-            onClick={downloadQR}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-colors"
-          >
-            <Download className="w-4 h-4" />
-            Download PNG
-          </button>
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 text-center animate-fade-in">
+          <div className="inline-block p-4 bg-slate-50 rounded-2xl mb-4">
+            <img
+              src={qrImage}
+              alt="Generated QR Code"
+              className="mx-auto rounded-lg"
+              style={{ width: Math.min(size, 320), height: Math.min(size, 320) }}
+            />
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button
+              onClick={downloadQR}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 text-white font-semibold shadow hover:scale-[1.01] transition-all"
+            >
+              <Download className="w-4 h-4" />
+              Download PNG
+            </button>
+            <button
+              onClick={() => {
+                setQrImage(null);
+                setText('');
+              }}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-colors"
+            >
+              Generate New
+            </button>
+          </div>
+
+          <p className="text-xs text-slate-400 mt-4">
+            Scan with any QR code reader or camera app
+          </p>
         </div>
       )}
     </div>
