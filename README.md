@@ -113,7 +113,7 @@ Everything runs directly in your browser:
 
 ## ☁️ Architecture Diagram
 
-```mermaid
+``mermaid
 flowchart TB
 
 A((👤 User)) --> B((🌐 Browser))
@@ -131,9 +131,7 @@ G --> H
 
 H --> I[[🚫 No Uploads]]
 I --> J[[⚡ Instant Results]]
-```
-
----
+`
 
 # 📊 Comparison
 
@@ -157,7 +155,7 @@ I --> J[[⚡ Instant Results]]
 
 # 🚀 Quick Start
 
-```bash
+``bash
 git clone https://github.com/ArifAli8866/toolbox-pro.git
 
 cd toolbox-pro
@@ -165,7 +163,7 @@ cd toolbox-pro
 npm install
 
 npm run dev
-```
+
 
 ---
 
