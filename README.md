@@ -1,7 +1,7 @@
 <div align="center">
 
 <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&height=320&color=gradient&customColorList=12,20,30&text=ToolBox%20Pro&fontSize=70&fontColor=ffffff&animation=twinkling&fontAlignY=40"/>
-
+-
 # 🚀 ToolBox Pro
 
 ### ⚡ The Ultimate Browser-Based Toolkit
