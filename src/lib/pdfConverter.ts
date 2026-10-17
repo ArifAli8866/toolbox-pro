@@ -57,30 +57,74 @@ async function getEmbeddableImageData(file: File): Promise<{ bytes: Uint8Array; 
   });
 }
 
-// Convert one or more images into a single multi-page PDF
-export async function imagesToPdf(files: File[]): Promise<Uint8Array> {
+export interface ImagesToPdfOptions {
+  pageSize?: 'fit' | 'a4';
+  orientation?: 'auto' | 'portrait' | 'landscape';
+  margin?: number;
+  onProgress?: (current: number, total: number) => void;
+}
+
+// Convert one or more images into a single multi-page PDF in exact order
+export async function imagesToPdf(
+  files: File[],
+  options: ImagesToPdfOptions = {}
+): Promise<Uint8Array> {
+  const { pageSize = 'fit', orientation = 'auto', margin = 0, onProgress } = options;
   const pdfDoc = await PDFDocument.create();
 
-  for (const file of files) {
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    onProgress?.(i + 1, files.length);
+
     const { bytes, format, width, height } = await getEmbeddableImageData(file);
     const embeddedImage = format === 'png' ? await pdfDoc.embedPng(bytes) : await pdfDoc.embedJpg(bytes);
 
-    // Standard A4 or match aspect ratio
-    const page = pdfDoc.addPage([width, height]);
-    page.drawImage(embeddedImage, {
-      x: 0,
-      y: 0,
-      width,
-      height,
-    });
+    if (pageSize === 'a4') {
+      // Standard A4 dimensions in PDF points (72 DPI): 595.28 x 841.89
+      const isLandscape =
+        orientation === 'landscape' || (orientation === 'auto' && width > height);
+      const pageWidth = isLandscape ? 841.89 : 595.28;
+      const pageHeight = isLandscape ? 595.28 : 841.89;
+
+      const availWidth = Math.max(10, pageWidth - margin * 2);
+      const availHeight = Math.max(10, pageHeight - margin * 2);
+
+      // Fit inside available area while preserving aspect ratio
+      const scale = Math.min(availWidth / width, availHeight / height);
+      const drawWidth = width * scale;
+      const drawHeight = height * scale;
+
+      // Center on page
+      const drawX = (pageWidth - drawWidth) / 2;
+      const drawY = (pageHeight - drawHeight) / 2;
+
+      const page = pdfDoc.addPage([pageWidth, pageHeight]);
+      page.drawImage(embeddedImage, {
+        x: drawX,
+        y: drawY,
+        width: drawWidth,
+        height: drawHeight,
+      });
+    } else {
+      // 'fit' mode: page size fits image dimensions plus margins
+      const pageWidth = width + margin * 2;
+      const pageHeight = height + margin * 2;
+      const page = pdfDoc.addPage([pageWidth, pageHeight]);
+      page.drawImage(embeddedImage, {
+        x: margin,
+        y: margin,
+        width,
+        height,
+      });
+    }
   }
 
   return pdfDoc.save();
 }
 
 // Backwards-compatible single-image wrapper
-export async function imageToPdf(file: File): Promise<Uint8Array> {
-  return imagesToPdf([file]);
+export async function imageToPdf(file: File, options?: ImagesToPdfOptions): Promise<Uint8Array> {
+  return imagesToPdf([file], options);
 }
 
 // Convert PDF pages to images using pdfjs-dist

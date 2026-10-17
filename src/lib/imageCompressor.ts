@@ -1,3 +1,5 @@
+import JSZip from 'jszip';
+
 // High-performance image compression using the HTML5 Canvas API
 
 export interface CompressionOptions {
@@ -149,4 +151,27 @@ export function formatFileSize(bytes: number): string {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   const val = bytes / Math.pow(k, i);
   return `${parseFloat(val.toFixed(2))} ${sizes[i]}`;
+}
+
+export async function createCompressedImagesZip(
+  items: Array<{ file: File; blob: Blob; format?: string }>
+): Promise<Blob> {
+  const zip = new JSZip();
+  const usedNames = new Set<string>();
+
+  for (const item of items) {
+    const ext = item.format ? (item.format === 'jpeg' ? 'jpg' : item.format) : (item.file.name.split('.').pop() || 'jpg');
+    const baseName = item.file.name.replace(/\.[^.]+$/, '');
+    let outputName = `${baseName}_optimized.${ext}`;
+    let counter = 1;
+
+    while (usedNames.has(outputName)) {
+      outputName = `${baseName}_optimized_(${counter}).${ext}`;
+      counter++;
+    }
+    usedNames.add(outputName);
+    zip.file(outputName, item.blob);
+  }
+
+  return await zip.generateAsync({ type: 'blob' });
 }
