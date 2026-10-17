@@ -4,8 +4,10 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import Footer from './Footer';
+import SearchDialog from './SearchDialog';
 import { ToastProvider } from './Toast';
 import { BreadcrumbItem } from './Breadcrumbs';
+import { getFavorites, getRecentTools } from '@/lib/personalization';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -28,8 +30,14 @@ export default function AppShell({
 }: AppShellProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [favoritesCount, setFavoritesCount] = useState(0);
   const [recentCount, setRecentCount] = useState(0);
+
+  const updateCounts = () => {
+    setFavoritesCount(getFavorites().length);
+    setRecentCount(getRecentTools().length);
+  };
 
   useEffect(() => {
     try {
@@ -37,13 +45,32 @@ export default function AppShell({
       if (savedCollapsed === 'true') {
         setCollapsed(true);
       }
-      const favs = JSON.parse(localStorage.getItem('toolbox-favorites') || '[]');
-      setFavoritesCount(favs.length);
-      const recs = JSON.parse(localStorage.getItem('toolbox-recent') || '[]');
-      setRecentCount(recs.length);
     } catch {
       // Ignore storage errors
     }
+
+    updateCounts();
+
+    const handleFavUpdated = () => updateCounts();
+    const handleRecentUpdated = () => updateCounts();
+
+    window.addEventListener('toolbox-favorites-updated', handleFavUpdated);
+    window.addEventListener('toolbox-recent-updated', handleRecentUpdated);
+
+    // Global keyboard shortcut Cmd+K or Ctrl+K
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setSearchOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('toolbox-favorites-updated', handleFavUpdated);
+      window.removeEventListener('toolbox-recent-updated', handleRecentUpdated);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   const handleToggleCollapse = () => {
@@ -58,6 +85,14 @@ export default function AppShell({
     });
   };
 
+  const handleOpenSearchModal = () => {
+    if (onOpenSearch) {
+      onOpenSearch();
+    } else {
+      setSearchOpen(true);
+    }
+  };
+
   return (
     <ToastProvider>
       <div className="min-h-screen bg-slate-50 dark:bg-[#090d16] text-slate-900 dark:text-slate-100 flex flex-col antialiased">
@@ -67,7 +102,7 @@ export default function AppShell({
           onToggleCollapse={handleToggleCollapse}
           mobileOpen={mobileOpen}
           onCloseMobile={() => setMobileOpen(false)}
-          onOpenSearch={onOpenSearch}
+          onOpenSearch={handleOpenSearchModal}
           favoritesCount={favoritesCount}
           recentCount={recentCount}
         />
@@ -82,7 +117,7 @@ export default function AppShell({
           <Header
             breadcrumbs={breadcrumbs}
             onOpenMobileSidebar={() => setMobileOpen(true)}
-            onOpenSearch={onOpenSearch}
+            onOpenSearch={handleOpenSearchModal}
             collapsed={collapsed}
           />
 
@@ -102,7 +137,7 @@ export default function AppShell({
                     )}
                   </div>
                   {subtitle && (
-                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
                       {subtitle}
                     </p>
                   )}
@@ -120,6 +155,9 @@ export default function AppShell({
           {/* Universal Footer */}
           <Footer />
         </div>
+
+        {/* Global Search Dialog Modal */}
+        <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />
       </div>
     </ToastProvider>
   );
