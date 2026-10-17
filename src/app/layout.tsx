@@ -29,7 +29,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f0f2f7" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#0e0e10" },
   ],
 };
@@ -37,7 +37,14 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="bg-[#f0f2f7] text-[#0f172a] dark:bg-[#0e0e10] dark:text-[#f1f1f4] antialiased min-h-screen selection:bg-[#2563eb]/20 selection:text-[#2563eb] transition-colors duration-200">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('toolbox-theme');if(t==='dark'){document.documentElement.classList.add('dark');document.documentElement.setAttribute('data-theme','dark');document.documentElement.style.colorScheme='dark';}else{document.documentElement.classList.remove('dark');document.documentElement.setAttribute('data-theme','light');document.documentElement.style.colorScheme='light';}}catch(e){}`,
+          }}
+        />
+      </head>
+      <body className="bg-white text-[#0f172a] dark:bg-[#0e0e10] dark:text-[#f1f1f4] antialiased min-h-screen selection:bg-[#2563eb]/20 selection:text-[#2563eb] transition-colors duration-200">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

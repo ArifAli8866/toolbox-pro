@@ -1,23 +1,25 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
+
 @layer base {
   :root {
-    --window: #f0f2f7;
-    --content: #f0f2f7;
+    --window: #ffffff;
+    --content: #ffffff;
     --surface: #ffffff;
     --surface-raised: #ffffff;
-    --surface-sunken: #e9ecf2;
-    --sidebar: #fafbfd;
-    --chrome: #fafbfdeb;
+    --surface-sunken: #f8fafc;
+    --sidebar: #ffffff;
+    --chrome: #ffffff;
     --text: #0f172a;
-    --text-2: #475569;
+    --text-2: #334155;
     --text-3: #64748b;
     --text-4: #94a3b8;
-    --separator: rgba(15, 23, 42, 0.07);
-    --separator-soft: rgba(15, 23, 42, 0.04);
-    --edge: rgba(15, 23, 42, 0.06);
-    --edge-strong: rgba(15, 23, 42, 0.12);
-    --tint: rgba(15, 23, 42, 0.035);
+    --separator: #f1f5f9;
+    --separator-soft: #f8fafc;
+    --edge: #e2e8f0;
+    --edge-strong: #cbd5e1;
+    --tint: rgba(15, 23, 42, 0.03);
     --tint-hover: rgba(15, 23, 42, 0.05);
     --tint-press: rgba(15, 23, 42, 0.08);
     --tint-strong: rgba(15, 23, 42, 0.07);
@@ -39,14 +41,14 @@
     --r-pill: 9999px;
 
     /* Semantic Compatibility Tokens */
-    --bg-page: #f0f2f7;
+    --bg-page: #ffffff;
     --bg-surface: #ffffff;
     --bg-surface-elevated: #ffffff;
-    --bg-surface-subtle: #e9ecf2;
-    --border-main: rgba(15, 23, 42, 0.08);
-    --border-hover: rgba(15, 23, 42, 0.14);
+    --bg-surface-subtle: #f8fafc;
+    --border-main: #e2e8f0;
+    --border-hover: #cbd5e1;
     --text-primary: #0f172a;
-    --text-secondary: #475569;
+    --text-secondary: #334155;
     --text-muted: #64748b;
     --ring-focus: rgba(37, 99, 235, 0.35);
   }

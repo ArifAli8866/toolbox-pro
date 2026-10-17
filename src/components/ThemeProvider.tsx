@@ -14,7 +14,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('system');
+  const [theme, setThemeState] = useState<Theme>('light');
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
   const [mounted, setMounted] = useState(false);
 
@@ -23,6 +23,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const stored = localStorage.getItem('toolbox-theme') as Theme | null;
       if (stored === 'light' || stored === 'dark' || stored === 'system') {
         setThemeState(stored);
+      } else {
+        setThemeState('light');
       }
     } catch {
       // localStorage may fail in restricted iframes

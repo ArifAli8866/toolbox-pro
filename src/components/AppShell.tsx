@@ -94,7 +94,7 @@ export default function AppShell({
 
   return (
     <ToastProvider>
-      <div className="min-h-screen bg-[#f0f2f7] dark:bg-[#0e0e10] text-[#0f172a] dark:text-[#f1f1f4] flex flex-col antialiased">
+      <div className="min-h-screen bg-white dark:bg-[#0e0e10] text-[#0f172a] dark:text-[#f1f1f4] flex flex-col antialiased">
         {/* Left Sidebar */}
         <Sidebar
           collapsed={collapsed}
@@ -122,7 +122,7 @@ export default function AppShell({
 
           {/* Optional Consistent Page Header */}
           {title && (
-            <div className="mx-3 sm:mx-6 lg:mx-8 mt-4 rounded-2xl bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] px-6 sm:px-8 py-5 shadow-saas-card">
+            <div className="mx-3 sm:mx-6 lg:mx-8 mt-4 rounded-2xl bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-white/[0.08] px-6 sm:px-8 py-5 shadow-saas-card">
               <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2.5 mb-1">

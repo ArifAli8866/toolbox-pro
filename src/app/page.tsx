@@ -230,7 +230,7 @@ export default function HomePage() {
 
         <div className="max-w-4xl mx-auto text-center">
           {/* Pill Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] shadow-saas-pill text-xs font-semibold text-[#0f172a] dark:text-[#f1f1f4] mb-6 animate-fade-in">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-white/[0.08] shadow-saas-pill text-xs font-semibold text-[#0f172a] dark:text-[#f1f1f4] mb-6 animate-fade-in">
             <span className="w-2 h-2 rounded-full bg-[#2563eb] animate-pulse" />
             <span>Client-Side Architecture • 24+ Production Utilities • 100% Private</span>
           </div>
@@ -260,7 +260,7 @@ export default function HomePage() {
             </Link>
             <a
               href="#tools-catalog"
-              className="px-6 py-3 rounded-[9px] bg-white dark:bg-[#1e1e21] hover:bg-[#f0f2f7] dark:hover:bg-[#232327] text-[#0f172a] dark:text-[#f1f1f4] border border-black/[0.06] dark:border-white/[0.08] font-semibold text-sm shadow-saas-pill transition-all"
+              className="px-6 py-3 rounded-[9px] bg-white dark:bg-[#1e1e21] hover:bg-slate-50 dark:hover:bg-[#232327] text-[#0f172a] dark:text-[#f1f1f4] border border-slate-200/80 dark:border-white/[0.08] font-semibold text-sm shadow-saas-pill transition-all"
             >
               Explore All 24 Tools
             </a>
@@ -275,7 +275,7 @@ export default function HomePage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Find a tool (e.g. compress pdf, json formatter, background remover, jwt)..."
-                className="w-full pl-12 pr-10 py-3.5 rounded-full bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] text-[#0f172a] dark:text-white placeholder-[#94a3b8] dark:placeholder-[#5c5c66] shadow-saas-pill focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-all"
+                className="w-full pl-12 pr-10 py-3.5 rounded-full bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-white/[0.08] text-[#0f172a] dark:text-white placeholder-[#94a3b8] dark:placeholder-[#5c5c66] shadow-saas-pill focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-all"
               />
               {searchQuery && (
                 <button
@@ -289,15 +289,15 @@ export default function HomePage() {
           </div>
 
           {/* Live Command Center Preview Showcase Card */}
-          <div className="rounded-2xl bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] shadow-saas-card p-6 sm:p-8 text-left transition-all">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-black/[0.05] dark:border-white/[0.07]">
+          <div className="rounded-2xl bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-white/[0.08] shadow-saas-card p-6 sm:p-8 text-left transition-all">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-100 dark:border-white/[0.07]">
               <div>
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                   <h3 className="text-base font-bold text-[#0f172a] dark:text-white">
                     Client Engine Active
                   </h3>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e9ecf2] dark:bg-[#232327] text-[#475569] dark:text-[#a1a1ab]">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 dark:bg-[#232327] text-slate-600 dark:text-[#a1a1ab]">
                     v2.5 Modern
                   </span>
                 </div>
@@ -309,14 +309,14 @@ export default function HomePage() {
               <div className="flex items-center gap-2">
                 <Link
                   href="/converter"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[9px] bg-[#e9ecf2] dark:bg-[#232327] hover:bg-[#e2e6ee] dark:hover:bg-[#2c2c32] text-[#0f172a] dark:text-[#f1f1f4] text-xs font-semibold transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[9px] bg-slate-100 hover:bg-slate-200/70 dark:bg-[#232327] dark:hover:bg-[#2c2c32] text-[#0f172a] dark:text-[#f1f1f4] text-xs font-semibold transition-colors"
                 >
                   <FileText className="w-3.5 h-3.5 text-[#2563eb]" />
                   <span>Batch Converter</span>
                 </Link>
                 <Link
                   href="/compressor"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[9px] bg-[#e9ecf2] dark:bg-[#232327] hover:bg-[#e2e6ee] dark:hover:bg-[#2c2c32] text-[#0f172a] dark:text-[#f1f1f4] text-xs font-semibold transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[9px] bg-slate-100 hover:bg-slate-200/70 dark:bg-[#232327] dark:hover:bg-[#2c2c32] text-[#0f172a] dark:text-[#f1f1f4] text-xs font-semibold transition-colors"
                 >
                   <Minimize2 className="w-3.5 h-3.5 text-emerald-500" />
                   <span>Compressor</span>
@@ -326,7 +326,7 @@ export default function HomePage() {
 
             {/* 3 Metric Summary Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6">
-              <div className="p-4 rounded-xl bg-[#f0f2f7]/80 dark:bg-[#131316]/80 border border-black/[0.04] dark:border-white/[0.05] shadow-xs">
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#131316]/80 border border-slate-100 dark:border-white/[0.05] shadow-xs">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-semibold text-[#64748b] dark:text-[#a1a1ab]">
                     Processing Mode
@@ -339,7 +339,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#f0f2f7]/80 dark:bg-[#131316]/80 border border-black/[0.04] dark:border-white/[0.05] shadow-xs">
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#131316]/80 border border-slate-100 dark:border-white/[0.05] shadow-xs">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-semibold text-[#64748b] dark:text-[#a1a1ab]">
                     Network Latency
@@ -352,7 +352,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#f0f2f7]/80 dark:bg-[#131316]/80 border border-black/[0.04] dark:border-white/[0.05] shadow-xs">
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#131316]/80 border border-slate-100 dark:border-white/[0.05] shadow-xs">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-semibold text-[#64748b] dark:text-[#a1a1ab]">
                     Tools Available
@@ -372,7 +372,7 @@ export default function HomePage() {
       {/* ===== WHY DEVELOPERS CHOOSE CLIENT-SIDE SECTION ===== */}
       <section className="mb-20 max-w-5xl mx-auto">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] shadow-saas-pill text-[11px] font-semibold text-[#0f172a] dark:text-[#f1f1f4] mb-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-white/[0.08] shadow-saas-pill text-[11px] font-semibold text-[#0f172a] dark:text-[#f1f1f4] mb-3">
             <span>Problem vs Solution</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0f172a] dark:text-white tracking-tight">
@@ -390,9 +390,9 @@ export default function HomePage() {
             return (
               <div
                 key={idx}
-                className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-black/[0.06] dark:border-white/[0.08] p-7 shadow-saas-card hover:shadow-saas-hover hover:-translate-y-0.5 transition-all"
+                className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/80 dark:border-white/[0.08] p-7 shadow-saas-card hover:shadow-saas-hover hover:-translate-y-0.5 transition-all"
               >
-                <div className="w-11 h-11 rounded-xl bg-[#f0f2f7] dark:bg-[#131316] text-[#0f172a] dark:text-[#f1f1f4] flex items-center justify-center mb-4">
+                <div className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-[#131316] text-[#0f172a] dark:text-[#f1f1f4] flex items-center justify-center mb-4">
                   <Icon className="w-5 h-5 text-[#2563eb] dark:text-[#0a84ff]" />
                 </div>
                 <h3 className="text-[15px] font-bold text-[#0f172a] dark:text-white mb-1">
@@ -410,7 +410,7 @@ export default function HomePage() {
         </div>
 
         {/* Full-width Capsule Solution Banner */}
-        <div className="rounded-xl bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] py-3.5 px-6 text-center text-xs sm:text-sm font-medium text-[#475569] dark:text-[#a1a1ab] shadow-saas-pill max-w-3xl mx-auto">
+        <div className="rounded-xl bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-white/[0.08] py-3.5 px-6 text-center text-xs sm:text-sm font-medium text-[#475569] dark:text-[#a1a1ab] shadow-saas-pill max-w-3xl mx-auto">
           With <span className="font-bold text-[#2563eb] dark:text-[#0a84ff]">ToolBox Pro</span>, your files are processed directly in browser RAM with HTML5 Canvas &amp; WASM. Zero uploads, zero telemetry, and instant results.
         </div>
       </section>
@@ -419,7 +419,7 @@ export default function HomePage() {
       {(favoriteToolItems.length > 0 || recentToolItems.length > 0) && (
         <section className="mb-14 space-y-8">
           {favoriteToolItems.length > 0 && (
-            <div id="favorites" className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-black/[0.06] dark:border-white/[0.08] p-6 sm:p-7 shadow-saas-card">
+            <div id="favorites" className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/80 dark:border-white/[0.08] p-6 sm:p-7 shadow-saas-card">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
                   <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
@@ -442,7 +442,7 @@ export default function HomePage() {
           )}
 
           {recentToolItems.length > 0 && (
-            <div id="recent" className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-black/[0.06] dark:border-white/[0.08] p-6 sm:p-7 shadow-saas-card">
+            <div id="recent" className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/80 dark:border-white/[0.08] p-6 sm:p-7 shadow-saas-card">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-[#2563eb] dark:text-[#0a84ff]" />
@@ -476,7 +476,7 @@ export default function HomePage() {
       <section id="tools-catalog" className="mb-20 scroll-mt-24">
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4 mb-8">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] shadow-saas-pill text-[11px] font-semibold text-[#0f172a] dark:text-[#f1f1f4] mb-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-white/[0.08] shadow-saas-pill text-[11px] font-semibold text-[#0f172a] dark:text-[#f1f1f4] mb-2">
               <span>Catalog</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0f172a] dark:text-white tracking-tight">
@@ -495,8 +495,8 @@ export default function HomePage() {
               onClick={() => setSelectedCategory('all')}
               className={`px-3 py-1.5 rounded-[9px] text-xs font-semibold transition-all ${
                 selectedCategory === 'all'
-                  ? 'bg-[#18181b] dark:bg-[#27272a] text-white shadow-xs'
-                  : 'bg-white dark:bg-[#1e1e21] text-[#475569] dark:text-[#a1a1ab] border border-black/[0.06] dark:border-white/[0.08] hover:text-[#0f172a] dark:hover:text-white shadow-xs'
+                  ? 'bg-[#2563eb] text-white shadow-xs'
+                  : 'bg-white dark:bg-[#1e1e21] text-[#475569] dark:text-[#a1a1ab] border border-slate-200/80 dark:border-white/[0.08] hover:text-[#0f172a] dark:hover:text-white shadow-xs'
               }`}
             >
               All ({ALL_TOOLS.length})
@@ -507,8 +507,8 @@ export default function HomePage() {
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-3 py-1.5 rounded-[9px] text-xs font-semibold transition-all ${
                   selectedCategory === cat.id
-                    ? 'bg-[#18181b] dark:bg-[#27272a] text-white shadow-xs'
-                    : 'bg-white dark:bg-[#1e1e21] text-[#475569] dark:text-[#a1a1ab] border border-black/[0.06] dark:border-white/[0.08] hover:text-[#0f172a] dark:hover:text-white shadow-xs'
+                    ? 'bg-[#2563eb] text-white shadow-xs'
+                    : 'bg-white dark:bg-[#1e1e21] text-[#475569] dark:text-[#a1a1ab] border border-slate-200/80 dark:border-white/[0.08] hover:text-[#0f172a] dark:hover:text-white shadow-xs'
                 }`}
               >
                 {cat.label} ({cat.count})
@@ -529,7 +529,7 @@ export default function HomePage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-white dark:bg-[#1e1e21] rounded-2xl border border-black/[0.06] dark:border-white/[0.08] p-8 shadow-saas-card">
+          <div className="text-center py-16 bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/80 dark:border-white/[0.08] p-8 shadow-saas-card">
             <Search className="w-10 h-10 text-[#94a3b8] dark:text-[#5c5c66] mx-auto mb-3" />
             <h3 className="text-base font-bold text-[#0f172a] dark:text-[#f1f1f4] mb-1">
               No matching tools found
@@ -551,9 +551,9 @@ export default function HomePage() {
       </section>
 
       {/* ===== ARCHITECTURE & PRINCIPLES SECTION ===== */}
-      <section className="mb-20 py-10 px-6 sm:px-8 rounded-2xl bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] shadow-saas-card">
+      <section className="mb-20 py-10 px-6 sm:px-8 rounded-2xl bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-white/[0.08] shadow-saas-card">
         <div className="text-center max-w-2xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f0f2f7] dark:bg-[#131316] border border-black/[0.04] dark:border-white/[0.06] shadow-xs text-[11px] font-semibold text-[#0f172a] dark:text-[#f1f1f4] mb-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-[#131316] border border-slate-200/60 dark:border-white/[0.06] shadow-xs text-[11px] font-semibold text-[#0f172a] dark:text-[#f1f1f4] mb-3">
             <Shield className="w-3.5 h-3.5 text-emerald-500" />
             <span>Architecture &amp; Principles</span>
           </div>
@@ -571,9 +571,9 @@ export default function HomePage() {
             return (
               <div
                 key={i}
-                className="bg-[#f0f2f7]/80 dark:bg-[#131316]/80 rounded-xl border border-black/[0.04] dark:border-white/[0.05] p-5 text-center shadow-xs"
+                className="bg-slate-50 dark:bg-[#131316]/80 rounded-xl border border-slate-100 dark:border-white/[0.05] p-5 text-center shadow-xs"
               >
-                <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#1e1e21] text-[#2563eb] dark:text-[#0a84ff] flex items-center justify-center mx-auto mb-3 shadow-xs border border-black/[0.04] dark:border-white/[0.06]">
+                <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#1e1e21] text-[#2563eb] dark:text-[#0a84ff] flex items-center justify-center mx-auto mb-3 shadow-xs border border-slate-100 dark:border-white/[0.06]">
                   <Icon className="w-5 h-5" />
                 </div>
                 <div className="text-lg font-bold text-[#0f172a] dark:text-white mb-1">
@@ -594,7 +594,7 @@ export default function HomePage() {
       {/* ===== TRANSPARENT PRICING / PLANS SECTION ===== */}
       <section className="mb-20 max-w-5xl mx-auto">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] shadow-saas-pill text-[11px] font-semibold text-[#0f172a] dark:text-[#f1f1f4] mb-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-white/[0.08] shadow-saas-pill text-[11px] font-semibold text-[#0f172a] dark:text-[#f1f1f4] mb-3">
             <span>Pricing</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0f172a] dark:text-white tracking-tight">
@@ -613,7 +613,7 @@ export default function HomePage() {
               className={`relative bg-white dark:bg-[#1e1e21] rounded-2xl border p-7 flex flex-col justify-between shadow-saas-card hover:shadow-saas-hover transition-all ${
                 tier.popular
                   ? 'border-[#2563eb] ring-2 ring-[#2563eb]/20'
-                  : 'border-black/[0.06] dark:border-white/[0.08]'
+                  : 'border-slate-200/80 dark:border-white/[0.08]'
               }`}
             >
               {tier.popular && (
@@ -624,10 +624,10 @@ export default function HomePage() {
 
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-9 h-9 rounded-xl bg-[#f0f2f7] dark:bg-[#131316] flex items-center justify-center text-[#0f172a] dark:text-[#f1f1f4]">
+                  <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-[#131316] flex items-center justify-center text-[#0f172a] dark:text-[#f1f1f4]">
                     <Wrench className="w-4 h-4 text-[#2563eb] dark:text-[#0a84ff]" />
                   </div>
-                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-[#f0f2f7] dark:bg-[#131316] text-[#475569] dark:text-[#a1a1ab]">
+                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-[#131316] text-[#475569] dark:text-[#a1a1ab]">
                     {tier.badge}
                   </span>
                 </div>
@@ -649,7 +649,7 @@ export default function HomePage() {
                 </div>
 
                 {/* Checklist */}
-                <div className="space-y-2.5 pt-4 border-t border-black/[0.05] dark:border-white/[0.06] mb-6">
+                <div className="space-y-2.5 pt-4 border-t border-slate-100 dark:border-white/[0.06] mb-6">
                   {tier.features.map((feat, fIdx) => (
                     <div key={fIdx} className="flex items-start gap-2.5 text-xs text-[#475569] dark:text-[#a1a1ab]">
                       <Check className="w-4 h-4 text-[#2563eb] dark:text-[#0a84ff] flex-shrink-0 mt-0.5" />
@@ -685,7 +685,7 @@ export default function HomePage() {
       {/* ===== FREQUENTLY ASKED QUESTIONS ===== */}
       <section className="mb-20 max-w-3xl mx-auto">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] shadow-saas-pill text-[11px] font-semibold text-[#0f172a] dark:text-[#f1f1f4] mb-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-white/[0.08] shadow-saas-pill text-[11px] font-semibold text-[#0f172a] dark:text-[#f1f1f4] mb-3">
             <span>FAQ</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0f172a] dark:text-white tracking-tight">
@@ -702,12 +702,12 @@ export default function HomePage() {
             return (
               <div
                 key={i}
-                className="bg-white dark:bg-[#1e1e21] rounded-xl border border-black/[0.06] dark:border-white/[0.08] shadow-saas-card overflow-hidden transition-all"
+                className="bg-white dark:bg-[#1e1e21] rounded-xl border border-slate-200/80 dark:border-white/[0.08] shadow-saas-card overflow-hidden transition-all"
               >
                 <button
                   type="button"
                   onClick={() => setFaqOpen((prev) => ({ ...prev, [i]: !prev[i] }))}
-                  className="w-full flex items-center justify-between px-5 py-4 text-left transition-colors hover:bg-black/[0.02] dark:hover:bg-white/[0.02]"
+                  className="w-full flex items-center justify-between px-5 py-4 text-left transition-colors hover:bg-slate-50 dark:hover:bg-white/[0.02]"
                 >
                   <span className="font-semibold text-xs sm:text-sm text-[#0f172a] dark:text-white">
                     {faq.q}
@@ -719,7 +719,7 @@ export default function HomePage() {
                   />
                 </button>
                 {isOpen && (
-                  <div className="px-5 pb-4 text-xs sm:text-sm text-[#475569] dark:text-[#a1a1ab] leading-relaxed border-t border-black/[0.05] dark:border-white/[0.06] pt-3">
+                  <div className="px-5 pb-4 text-xs sm:text-sm text-[#475569] dark:text-[#a1a1ab] leading-relaxed border-t border-slate-100 dark:border-white/[0.06] pt-3">
                     {faq.a}
                   </div>
                 )}

@@ -84,7 +84,7 @@ export default function ToolCard({
 
   return (
     <div
-      className={`group relative flex flex-col justify-between bg-white dark:bg-[#1e1e21] rounded-2xl border border-black/[0.06] dark:border-white/[0.08] p-5 shadow-saas-card hover:shadow-saas-hover hover:border-black/[0.12] dark:hover:border-white/[0.16] hover:-translate-y-0.5 transition-all duration-200 ${
+      className={`group relative flex flex-col justify-between bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/80 dark:border-white/[0.08] p-5 shadow-saas-card hover:shadow-saas-hover hover:border-slate-300 dark:hover:border-white/[0.16] hover:-translate-y-0.5 transition-all duration-200 ${
         featured ? 'ring-1 ring-blue-500/20 bg-gradient-to-b from-white to-blue-50/15 dark:from-[#1e1e21] dark:to-blue-950/20' : ''
       }`}
     >
@@ -162,7 +162,7 @@ export default function ToolCard({
       </div>
 
       {/* Card Action Link */}
-      <div className="pt-3 border-t border-black/[0.05] dark:border-white/[0.06] flex items-center justify-between text-xs font-semibold text-[#2563eb] dark:text-[#0a84ff]">
+      <div className="pt-3 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-xs font-semibold text-[#2563eb] dark:text-[#0a84ff]">
         <span className="inline-flex items-center gap-1.5 text-[#64748b] dark:text-[#7b7b85]">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
           Client-Side

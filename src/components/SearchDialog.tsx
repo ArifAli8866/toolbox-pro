@@ -132,10 +132,10 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
         role="dialog"
         aria-modal="true"
         aria-label="Global Tool Search"
-        className="relative w-full max-w-2xl bg-white dark:bg-[#1e1e21] rounded-2xl border border-black/[0.08] dark:border-white/[0.1] shadow-2xl overflow-hidden animate-slide-up flex flex-col max-h-[80vh]"
+        className="relative w-full max-w-2xl bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/80 dark:border-white/[0.1] shadow-2xl overflow-hidden animate-slide-up flex flex-col max-h-[80vh]"
       >
         {/* Search Input Box */}
-        <div className="flex items-center gap-3 px-4 sm:px-6 py-3.5 border-b border-black/[0.06] dark:border-white/[0.08]">
+        <div className="flex items-center gap-3 px-4 sm:px-6 py-3.5 border-b border-slate-100 dark:border-white/[0.08]">
           <Search className="w-5 h-5 text-[#64748b] dark:text-[#7b7b85] flex-shrink-0" />
           <input
             ref={inputRef}
@@ -160,14 +160,14 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
             className="p-1 rounded-[6px] text-[#64748b] hover:text-[#0f172a] dark:text-[#a1a1ab] dark:hover:text-white"
             aria-label="Close search"
           >
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-[5px] border border-black/[0.06] dark:border-white/[0.08] bg-[#f0f2f7] dark:bg-[#131316]">
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-[5px] border border-slate-200/80 dark:border-white/[0.08] bg-slate-100 dark:bg-[#131316]">
               ESC
             </span>
           </button>
         </div>
 
         {/* Category Pills */}
-        <div className="flex items-center gap-1 px-4 sm:px-6 py-2 bg-[#f0f2f7] dark:bg-[#131316] border-b border-black/[0.06] dark:border-white/[0.08] overflow-x-auto">
+        <div className="flex items-center gap-1 px-4 sm:px-6 py-2 bg-slate-50 dark:bg-[#131316] border-b border-slate-100 dark:border-white/[0.08] overflow-x-auto">
           <button
             onClick={() => setSelectedCat('all')}
             className={`px-2.5 py-1 rounded-[7px] text-xs font-medium whitespace-nowrap transition-colors ${
@@ -211,8 +211,8 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
                   onMouseEnter={() => setActiveIndex(index)}
                   className={`flex items-center justify-between p-2.5 rounded-[9px] cursor-pointer transition-all ${
                     isSelected
-                      ? 'bg-[#e9ecf2] dark:bg-[#232327] text-[#0f172a] dark:text-white shadow-xs font-medium'
-                      : 'hover:bg-black/[0.03] dark:hover:bg-white/[0.04] text-[#0f172a] dark:text-[#f1f1f4]'
+                      ? 'bg-blue-50 text-[#2563eb] border border-blue-200/80 dark:bg-[#232327] dark:text-white dark:border-transparent shadow-xs font-medium'
+                      : 'hover:bg-slate-50 dark:hover:bg-white/[0.04] text-[#0f172a] dark:text-[#f1f1f4]'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
@@ -271,22 +271,22 @@ export default function SearchDialog({ open, onClose }: SearchDialogProps) {
         </div>
 
         {/* Footer shortcuts legend */}
-        <div className="px-4 py-2.5 bg-[#f0f2f7] dark:bg-[#131316] border-t border-black/[0.06] dark:border-white/[0.08] flex items-center justify-between text-[11px] text-[#64748b] dark:text-[#7b7b85]">
+        <div className="px-4 py-2.5 bg-slate-50 dark:bg-[#131316] border-t border-slate-100 dark:border-white/[0.08] flex items-center justify-between text-[11px] text-[#64748b] dark:text-[#7b7b85]">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 rounded-[5px] bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] font-mono text-[10px]">
+              <kbd className="px-1.5 py-0.5 rounded-[5px] bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-white/[0.08] font-mono text-[10px]">
                 ↑↓
               </kbd>
               Navigate
             </span>
             <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 rounded-[5px] bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] font-mono text-[10px]">
+              <kbd className="px-1.5 py-0.5 rounded-[5px] bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-white/[0.08] font-mono text-[10px]">
                 ↵
               </kbd>
               Select
             </span>
             <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 rounded-[5px] bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] font-mono text-[10px]">
+              <kbd className="px-1.5 py-0.5 rounded-[5px] bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-white/[0.08] font-mono text-[10px]">
                 Esc
               </kbd>
               Close

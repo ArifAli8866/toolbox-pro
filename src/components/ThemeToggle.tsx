@@ -25,7 +25,7 @@ export default function ThemeToggle() {
         onClick={() => setOpen(!open)}
         aria-label="Toggle theme"
         aria-expanded={open}
-        className="p-1.5 rounded-[9px] text-[#475569] dark:text-[#a1a1ab] hover:text-[#0f172a] dark:hover:text-white bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+        className="p-1.5 rounded-[9px] text-[#475569] dark:text-[#a1a1ab] hover:text-[#0f172a] dark:hover:text-white bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-white/[0.08] shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
       >
         {resolvedTheme === 'dark' ? (
           <Moon className="w-4 h-4 text-[#0a84ff]" />
@@ -38,7 +38,7 @@ export default function ThemeToggle() {
         <div
           role="menu"
           aria-label="Select color theme"
-          className="absolute right-0 mt-2 w-36 py-1.5 rounded-xl bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] shadow-saas-card z-50 animate-slide-up text-xs font-medium"
+          className="absolute right-0 mt-2 w-36 py-1.5 rounded-xl bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-white/[0.08] shadow-saas-card z-50 animate-slide-up text-xs font-medium"
         >
           <button
             role="menuitem"
