@@ -1,88 +1,158 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
+import AppShell from '@/components/AppShell';
 import { useToast } from '@/components/Toast';
+import { recordRecentTool } from '@/lib/personalization';
 import QRCode from 'qrcode';
 import {
-  LockKeyhole, QrCode, Code2, Palette, Image, Hash, Copy, RefreshCw,
-  Shield, Download, Eye, EyeOff, Check, Upload, CheckCircle, KeyRound, Fingerprint
+  LockKeyhole,
+  QrCode,
+  Code2,
+  Link as LinkIcon,
+  Palette,
+  Eye,
+  Image as ImageIcon,
+  Hash,
+  KeyRound,
+  Fingerprint,
+  Copy,
+  RefreshCw,
+  Shield,
+  Download,
+  EyeOff,
+  Check,
+  Upload,
+  AlertCircle,
+  Sliders,
 } from 'lucide-react';
 
-type UtilityTool = 'password' | 'qr' | 'base64' | 'color' | 'svg' | 'hash' | 'jwt' | 'uuid';
+type UtilityTool =
+  | 'password'
+  | 'qr'
+  | 'base64'
+  | 'url'
+  | 'color'
+  | 'contrast'
+  | 'svg'
+  | 'hash'
+  | 'jwt'
+  | 'uuid';
+
+const utilityTabs = [
+  { id: 'password' as const, icon: LockKeyhole, label: 'Password' },
+  { id: 'qr' as const, icon: QrCode, label: 'QR Generator' },
+  { id: 'base64' as const, icon: Code2, label: 'Base64' },
+  { id: 'url' as const, icon: LinkIcon, label: 'URL Encode' },
+  { id: 'color' as const, icon: Palette, label: 'Color Palette' },
+  { id: 'contrast' as const, icon: Eye, label: 'Contrast WCAG' },
+  { id: 'svg' as const, icon: ImageIcon, label: 'SVG → PNG' },
+  { id: 'hash' as const, icon: Hash, label: 'Hash Gen' },
+  { id: 'jwt' as const, icon: KeyRound, label: 'JWT Decoder' },
+  { id: 'uuid' as const, icon: Fingerprint, label: 'UUID Gen' },
+];
 
 export default function UtilitiesPage() {
-  const [activeTool, setActiveTool] = useState<UtilityTool>('password');
-
-  const tools = [
-    { id: 'password' as const, icon: LockKeyhole, label: 'Password Generator' },
-    { id: 'qr' as const, icon: QrCode, label: 'QR Generator' },
-    { id: 'base64' as const, icon: Code2, label: 'Base64' },
-    { id: 'color' as const, icon: Palette, label: 'Color Palette' },
-    { id: 'svg' as const, icon: Image, label: 'SVG → PNG' },
-    { id: 'hash' as const, icon: Hash, label: 'Hash Gen' },
-    { id: 'jwt' as const, icon: KeyRound, label: 'JWT Decoder' },
-    { id: 'uuid' as const, icon: Fingerprint, label: 'UUID Gen' },
-  ];
-
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">Utilities</h1>
-          <p className="text-slate-600">Password generator, QR codes, color palettes, and more.</p>
-        </div>
-
-        {/* Tool Tabs - Scrollable on mobile */}
-        <div className="flex justify-center mb-8 overflow-x-auto pb-2">
-          <div className="inline-flex bg-slate-100 rounded-xl p-1 gap-0.5">
-            {tools.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setActiveTool(t.id)}
-                className={`px-4 py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${
-                  activeTool === t.id ? 'bg-white shadow-md text-brand-600' : 'text-slate-600 hover:text-slate-800'
-                }`}
-              >
-                <t.icon className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">{t.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {activeTool === 'password' && <PasswordGenerator />}
-        {activeTool === 'qr' && <QRGenerator />}
-        {activeTool === 'base64' && <Base64Tool />}
-        {activeTool === 'color' && <ColorPalette />}
-        {activeTool === 'svg' && <SvgToPng />}
-        {activeTool === 'hash' && <HashGenerator />}
-        {activeTool === 'jwt' && <JwtDecoder />}
-        {activeTool === 'uuid' && <UuidGenerator />}
-      </div>
-      <Footer />
-    </div>
+    <React.Suspense fallback={<div className="p-12 text-center text-sm text-slate-400">Loading Utilities...</div>}>
+      <UtilitiesContent />
+    </React.Suspense>
   );
 }
 
-function PasswordGenerator() {
+function UtilitiesContent() {
+  const searchParams = useSearchParams();
+  const requestedTool = (searchParams.get('tool') as UtilityTool) || 'password';
+  const [activeTool, setActiveTool] = useState<UtilityTool>('password');
+
+  useEffect(() => {
+    const t = searchParams.get('tool') as UtilityTool;
+    if (utilityTabs.some((tab) => tab.id === t)) {
+      setActiveTool(t);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    recordRecentTool(activeTool);
+  }, [activeTool]);
+
+  return (
+    <AppShell
+      breadcrumbs={[
+        { label: 'Everyday Utilities', href: '/#category-utility' },
+        { label: utilityTabs.find((t) => t.id === activeTool)?.label || 'Utility' },
+      ]}
+      title="Everyday Utilities Suite"
+      subtitle="Cryptographic generators, secure tokens, QR codes, color tools, and decoders running purely in your browser."
+      badge="Web Crypto API"
+    >
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Horizontal Scrollable Tabs */}
+        <div className="flex justify-center overflow-x-auto pb-2">
+          <div className="inline-flex bg-slate-100 dark:bg-slate-800/80 rounded-2xl p-1.5 border border-slate-200/80 dark:border-slate-700/80 gap-1 shadow-xs">
+            {utilityTabs.map((t) => {
+              const Icon = t.icon;
+              const isSelected = activeTool === t.id;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => setActiveTool(t.id)}
+                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap ${
+                    isSelected
+                      ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{t.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Dynamic Tool Component */}
+        {activeTool === 'password' && <PasswordGeneratorTool />}
+        {activeTool === 'qr' && <QRGeneratorTool />}
+        {activeTool === 'base64' && <Base64Tool />}
+        {activeTool === 'url' && <UrlEncoderTool />}
+        {activeTool === 'color' && <ColorPaletteTool />}
+        {activeTool === 'contrast' && <ContrastCheckerTool />}
+        {activeTool === 'svg' && <SvgToPngTool />}
+        {activeTool === 'hash' && <HashGeneratorTool />}
+        {activeTool === 'jwt' && <JwtDecoderTool />}
+        {activeTool === 'uuid' && <UuidGeneratorTool />}
+      </div>
+    </AppShell>
+  );
+}
+
+// 1. Password Generator (Cryptographically Secure via Web Crypto API)
+function PasswordGeneratorTool() {
   const [password, setPassword] = useState('');
-  const [length, setLength] = useState(20);
+  const [length, setLength] = useState(24);
   const [includeUpper, setIncludeUpper] = useState(true);
   const [includeLower, setIncludeLower] = useState(true);
   const [includeNumbers, setIncludeNumbers] = useState(true);
   const [includeSymbols, setIncludeSymbols] = useState(true);
+  const [excludeAmbiguous, setExcludeAmbiguous] = useState(false);
   const [showPassword, setShowPassword] = useState(true);
   const [copied, setCopied] = useState(false);
   const toast = useToast();
 
   const generate = useCallback(() => {
-    const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const lower = 'abcdefghijklmnopqrstuvwxyz';
-    const numbers = '0123456789';
-    const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+    let upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let lower = 'abcdefghijklmnopqrstuvwxyz';
+    let numbers = '0123456789';
+    let symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+    if (excludeAmbiguous) {
+      upper = upper.replace(/[IO]/g, '');
+      lower = lower.replace(/[lo]/g, '');
+      numbers = numbers.replace(/[01]/g, '');
+      symbols = symbols.replace(/[{}\[\]()\/\\'"`~,;:.<>]/g, '');
+    }
 
     let chars = '';
     if (includeUpper) chars += upper;
@@ -90,28 +160,37 @@ function PasswordGenerator() {
     if (includeNumbers) chars += numbers;
     if (includeSymbols) chars += symbols;
 
-    if (!chars) { toast.warning('Select at least one character type'); return; }
+    if (!chars) {
+      toast.warning('Please select at least one character set.');
+      return;
+    }
 
-    const arr = new Uint32Array(length);
-    crypto.getRandomValues(arr);
+    // Cryptographically secure Web Crypto random values
+    const randomBuffer = new Uint32Array(length);
+    window.crypto.getRandomValues(randomBuffer);
+
     let result = '';
     for (let i = 0; i < length; i++) {
-      result += chars[arr[i] % chars.length];
+      result += chars[randomBuffer[i] % chars.length];
     }
+
     setPassword(result);
     setCopied(false);
-  }, [length, includeUpper, includeLower, includeNumbers, includeSymbols, toast]);
+  }, [length, includeUpper, includeLower, includeNumbers, includeSymbols, excludeAmbiguous, toast]);
+
+  useEffect(() => {
+    generate();
+  }, [generate]);
 
   const copyPassword = async () => {
-    if (password) {
-      await navigator.clipboard.writeText(password);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-      toast.success('Password copied to clipboard!');
-    }
+    if (!password) return;
+    await navigator.clipboard.writeText(password);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    toast.success('Secure password copied to clipboard!');
   };
 
-  const strength = (() => {
+  const strength = useMemo(() => {
     if (!password) return { level: 0, label: '', color: '' };
     let score = 0;
     if (password.length >= 12) score++;
@@ -119,51 +198,64 @@ function PasswordGenerator() {
     if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++;
     if (/[0-9]/.test(password)) score++;
     if (/[^a-zA-Z0-9]/.test(password)) score++;
-    if (score <= 1) return { level: 1, label: 'Weak', color: 'bg-red-500' };
-    if (score <= 2) return { level: 2, label: 'Fair', color: 'bg-orange-500' };
+
+    if (score <= 1) return { level: 1, label: 'Weak', color: 'bg-rose-500' };
+    if (score <= 2) return { level: 2, label: 'Fair', color: 'bg-amber-500' };
     if (score <= 3) return { level: 3, label: 'Good', color: 'bg-yellow-500' };
-    if (score <= 4) return { level: 4, label: 'Strong', color: 'bg-green-500' };
-    return { level: 5, label: 'Very Strong', color: 'bg-emerald-500' };
-  })();
+    if (score <= 4) return { level: 4, label: 'Strong', color: 'bg-emerald-500' };
+    return { level: 5, label: 'Very Strong', color: 'bg-emerald-600' };
+  }, [password]);
 
   return (
-    <div className="max-w-2xl mx-auto">
-      {/* Password Display */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-purple-600 flex items-center justify-center">
-            <Shield className="w-5 h-5 text-white" />
+    <div className="space-y-6">
+      {/* Password Output Card */}
+      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Shield className="w-4 h-4 text-emerald-500" />
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+              Web Crypto Generated Password
+            </span>
           </div>
-          <div>
-            <h3 className="font-semibold text-slate-800">Generated Password</h3>
-            <div className="flex items-center gap-2">
-              {strength.label && (
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                  strength.level >= 4 ? 'bg-green-100 text-green-700' :
-                  strength.level >= 3 ? 'bg-yellow-100 text-yellow-700' :
-                  'bg-red-100 text-red-700'
-                }`}>
-                  {strength.label}
-                </span>
-              )}
-            </div>
-          </div>
+          {strength.label && (
+            <span
+              className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                strength.level >= 4
+                  ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'
+                  : 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300'
+              }`}
+            >
+              {strength.label}
+            </span>
+          )}
         </div>
 
-        <div className="flex items-center gap-3 bg-slate-50 rounded-xl p-4 mb-4">
-          <div className="flex-1 font-mono text-lg break-all text-slate-800">
-            {showPassword ? password : '••••••••••••••••••••'}
+        <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/80 rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
+          <div className="flex-1 font-mono text-sm sm:text-base break-all text-slate-900 dark:text-white select-all">
+            {showPassword ? password : '•'.repeat(password.length)}
           </div>
-          <button onClick={() => setShowPassword(!showPassword)} className="p-2 rounded-lg hover:bg-slate-200 text-slate-500">
+          <button
+            onClick={() => setShowPassword(!showPassword)}
+            className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            aria-label="Toggle password visibility"
+          >
             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
-          <button onClick={copyPassword} className={`p-2 rounded-lg transition-all ${copied ? 'bg-green-100 text-green-600' : 'hover:bg-slate-200 text-slate-500'}`}>
+          <button
+            onClick={copyPassword}
+            className={`p-2 rounded-xl transition-all ${
+              copied
+                ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400'
+                : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/50'
+            }`}
+            aria-label="Copy password"
+          >
             {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
           </button>
         </div>
 
-        {/* Strength bar */}
-        <div className="w-full bg-slate-200 rounded-full h-2 mb-1 overflow-hidden">
+        {/* Strength Progress */}
+        <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
           <div
             className={`h-full ${strength.color} rounded-full transition-all duration-300`}
             style={{ width: `${(strength.level / 5) * 100}%` }}
@@ -172,37 +264,43 @@ function PasswordGenerator() {
       </div>
 
       {/* Options */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6 space-y-5">
+      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-5">
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="font-medium text-slate-700">Length: {length}</label>
-            <span className="text-sm text-slate-500">{length >= 20 ? 'Maximum security' : length >= 12 ? 'Strong' : 'Consider longer'}</span>
+          <div className="flex justify-between items-center text-xs font-bold text-slate-800 dark:text-slate-200 mb-2">
+            <span>Password Length: {length}</span>
+            <span className="text-slate-400 font-normal">
+              {length >= 24 ? 'Enterprise grade' : length >= 16 ? 'Recommended' : 'Moderate'}
+            </span>
           </div>
           <input
             type="range"
-            min={6}
+            min={8}
             max={64}
             value={length}
-            onChange={(e) => setLength(parseInt(e.target.value))}
+            onChange={(e) => setLength(parseInt(e.target.value, 10))}
             className="w-full"
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           {[
-            { label: 'Uppercase (A-Z)', checked: includeUpper, set: setIncludeUpper },
-            { label: 'Lowercase (a-z)', checked: includeLower, set: setIncludeLower },
+            { label: 'Uppercase Letters (A-Z)', checked: includeUpper, set: setIncludeUpper },
+            { label: 'Lowercase Letters (a-z)', checked: includeLower, set: setIncludeLower },
             { label: 'Numbers (0-9)', checked: includeNumbers, set: setIncludeNumbers },
-            { label: 'Symbols (!@#)', checked: includeSymbols, set: setIncludeSymbols },
+            { label: 'Special Symbols (!@#$)', checked: includeSymbols, set: setIncludeSymbols },
+            { label: 'Exclude Ambiguous (0, O, 1, l, I)', checked: excludeAmbiguous, set: setExcludeAmbiguous },
           ].map((opt) => (
-            <label key={opt.label} className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 transition-colors">
+            <label
+              key={opt.label}
+              className="flex items-center gap-3 p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition-colors"
+            >
               <input
                 type="checkbox"
                 checked={opt.checked}
                 onChange={(e) => opt.set(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500"
               />
-              <span className="text-sm text-slate-700">{opt.label}</span>
+              <span className="font-semibold text-slate-700 dark:text-slate-300">{opt.label}</span>
             </label>
           ))}
         </div>
@@ -210,697 +308,888 @@ function PasswordGenerator() {
 
       <button
         onClick={generate}
-        className="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-600 to-purple-600 text-white font-semibold shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:scale-[1.01] transition-all flex items-center justify-center gap-2"
+        className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 hover:from-brand-500 hover:to-purple-500 text-white font-bold text-xs sm:text-sm shadow-md shadow-brand-500/20 hover:scale-[1.01] transition-all flex items-center justify-center gap-2"
       >
-        <RefreshCw className="w-5 h-5" />
-        Generate Password
+        <RefreshCw className="w-4 h-4" />
+        <span>Generate New Secure Password</span>
       </button>
     </div>
   );
 }
 
-function QRGenerator() {
-  const [text, setText] = useState('');
-  const [qrImage, setQrImage] = useState<string | null>(null);
+// 2. QR Code Generator
+function QRGeneratorTool() {
+  const [text, setText] = useState('https://toolbox-pro-sooty.vercel.app');
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [size, setSize] = useState(256);
-  const [loading, setLoading] = useState(false);
   const toast = useToast();
 
-  const generateQR = async () => {
-    if (!text.trim()) { toast.warning('Enter text or URL'); return; }
-    setLoading(true);
+  const generateQR = useCallback(async () => {
+    if (!text.trim()) return;
     try {
-      // toDataURL generates the image directly — no canvas ref needed
-      const dataUrl = await QRCode.toDataURL(text, {
+      const data = await QRCode.toDataURL(text.trim(), {
         width: size,
         margin: 2,
         errorCorrectionLevel: 'M',
-        color: { dark: '#1e1b4b', light: '#ffffff' },
+        color: {
+          dark: '#0f172a',
+          light: '#ffffff',
+        },
       });
-      setQrImage(dataUrl);
-      toast.success('QR code generated!');
+      setQrDataUrl(data);
     } catch {
       toast.error('Failed to generate QR code');
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [text, size, toast]);
+
+  useEffect(() => {
+    generateQR();
+  }, [generateQR]);
 
   const downloadQR = () => {
-    if (qrImage) {
-      const a = document.createElement('a');
-      a.href = qrImage;
-      a.download = 'qrcode.png';
-      a.click();
-      toast.success('QR code downloaded!');
-    }
+    if (!qrDataUrl) return;
+    const a = document.createElement('a');
+    a.href = qrDataUrl;
+    a.download = 'qrcode.png';
+    a.click();
+    toast.success('Downloaded QR code PNG!');
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6 space-y-5">
+    <div className="space-y-6">
+      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-4">
         <div>
-          <label className="font-medium text-slate-700 mb-2 block">Text or URL</label>
+          <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">
+            Content, URL, or WiFi String
+          </label>
           <input
             type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="https://example.com or any text..."
-            className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+            placeholder="https://example.com or any plain text..."
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
         </div>
+
         <div>
-          <label className="font-medium text-slate-700 mb-2 block">Size: {size}px</label>
+          <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">
+            Resolution: {size} × {size} px
+          </label>
           <input
             type="range"
             min={128}
             max={512}
-            value={size}
             step={64}
-            onChange={(e) => setSize(parseInt(e.target.value))}
+            value={size}
+            onChange={(e) => setSize(parseInt(e.target.value, 10))}
             className="w-full"
           />
         </div>
-        <button
-          onClick={generateQR}
-          disabled={loading}
-          className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 text-white font-semibold shadow-lg shadow-violet-500/25 hover:scale-[1.01] transition-all flex items-center justify-center gap-2 disabled:opacity-60"
-        >
-          <QrCode className="w-5 h-5" />
-          {loading ? 'Generating...' : 'Generate QR Code'}
-        </button>
       </div>
 
-      {qrImage && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 text-center animate-slide-up">
-          <img src={qrImage} alt="QR Code" className="mx-auto rounded-xl mb-4 border border-slate-100" />
-          <button
-            onClick={downloadQR}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-colors"
-          >
-            <Download className="w-4 h-4" />
-            Download PNG
-          </button>
+      {qrDataUrl && (
+        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-8 text-center shadow-xs animate-slide-up space-y-4">
+          <div className="inline-block p-4 rounded-2xl bg-white shadow-md border border-slate-100">
+            <img src={qrDataUrl} alt="Generated QR code" className="mx-auto rounded-lg" />
+          </div>
+          <div>
+            <button
+              onClick={downloadQR}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs shadow-sm transition-all"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Download High-Res PNG ({size}px)</span>
+            </button>
+          </div>
         </div>
       )}
     </div>
   );
 }
 
+// 3. Base64 Tool
 function Base64Tool() {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState('Hello from ToolBox Pro!');
   const [output, setOutput] = useState('');
   const [mode, setMode] = useState<'encode' | 'decode'>('encode');
   const [error, setError] = useState<string | null>(null);
-  const [isFile, setIsFile] = useState(false);
   const toast = useToast();
 
   const handleConvert = () => {
     setError(null);
     try {
       if (mode === 'encode') {
-        setOutput(btoa(unescape(encodeURIComponent(input))));
+        const encoded = btoa(unescape(encodeURIComponent(input)));
+        setOutput(encoded);
+        toast.success('Encoded to Base64!');
       } else {
-        setOutput(decodeURIComponent(escape(atob(input.trim()))));
+        const decoded = decodeURIComponent(escape(atob(input.trim())));
+        setOutput(decoded);
+        toast.success('Decoded from Base64!');
       }
-    } catch (e: any) {
-      setError(e.message);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Base64 conversion failed';
+      setError(msg);
       setOutput('');
     }
   };
 
-  const handleFileConvert = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      const base64 = result.split(',')[1];
-      setInput(base64);
-      setOutput(result);
-      toast.success(`File encoded: ${file.name}`);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const copyOutput = () => {
-    if (output) {
-      navigator.clipboard.writeText(output);
-      toast.success('Copied!');
-    }
-  };
-
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex justify-center mb-2">
-        <div className="inline-flex bg-slate-100 rounded-lg p-1">
-          <button onClick={() => { setMode('encode'); setOutput(''); setError(null); }} className={`px-5 py-2 rounded-md text-sm font-semibold transition-all ${mode === 'encode' ? 'bg-white shadow text-brand-600' : 'text-slate-600'}`}>
+    <div className="space-y-6">
+      <div className="flex justify-center">
+        <div className="inline-flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1 text-xs font-semibold">
+          <button
+            onClick={() => {
+              setMode('encode');
+              setOutput('');
+              setError(null);
+            }}
+            className={`px-4 py-1.5 rounded-lg transition-colors ${
+              mode === 'encode' ? 'bg-white dark:bg-slate-900 text-brand-600 shadow-xs' : 'text-slate-500'
+            }`}
+          >
             Encode
           </button>
-          <button onClick={() => { setMode('decode'); setOutput(''); setError(null); }} className={`px-5 py-2 rounded-md text-sm font-semibold transition-all ${mode === 'decode' ? 'bg-white shadow text-brand-600' : 'text-slate-600'}`}>
+          <button
+            onClick={() => {
+              setMode('decode');
+              setOutput('');
+              setError(null);
+            }}
+            className={`px-4 py-1.5 rounded-lg transition-colors ${
+              mode === 'decode' ? 'bg-white dark:bg-slate-900 text-brand-600 shadow-xs' : 'text-slate-500'
+            }`}
+          >
             Decode
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-          <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200 bg-slate-50">
-            <span className="font-semibold text-sm text-slate-700">{mode === 'encode' ? 'Text to Encode' : 'Base64 to Decode'}</span>
-            {mode === 'encode' && (
-              <label className="flex items-center gap-1 text-xs text-brand-600 cursor-pointer hover:text-brand-700">
-                <Upload className="w-3.5 h-3.5" />
-                <input type="file" onChange={handleFileConvert} className="hidden" />
-                From file
-              </label>
-            )}
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
+          <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-2">
+            {mode === 'encode' ? 'Plain Text to Encode' : 'Base64 to Decode'}
+          </span>
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={mode === 'encode' ? 'Enter text to encode...' : 'Paste base64 here...'}
-            className="w-full h-56 p-4 font-mono text-sm bg-white resize-none focus:outline-none placeholder:text-slate-400"
+            className="w-full h-48 font-mono text-xs p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 focus:outline-none resize-y"
           />
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-          <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200 bg-slate-50">
-            <span className="font-semibold text-sm text-slate-700">Result</span>
-            <button onClick={copyOutput} className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500 transition-colors">
-              <Copy className="w-4 h-4" />
-            </button>
+        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Result</span>
+            {output && (
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(output);
+                  toast.success('Copied!');
+                }}
+                className="text-[11px] text-brand-600 font-semibold hover:underline"
+              >
+                Copy
+              </button>
+            )}
           </div>
-          <div className={`w-full h-56 p-4 font-mono text-sm overflow-auto ${error ? 'text-red-500' : 'text-slate-800'}`}>
-            {error || output || <span className="text-slate-400">Result will appear here...</span>}
+          <div className="w-full h-48 font-mono text-xs p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 overflow-auto">
+            {error ? (
+              <span className="text-rose-500">{error}</span>
+            ) : (
+              <span className="text-slate-800 dark:text-slate-200 break-all">{output || 'Result will appear here...'}</span>
+            )}
           </div>
         </div>
       </div>
 
-      <button
-        onClick={handleConvert}
-        disabled={!input.trim()}
-        className="w-full max-w-xs mx-auto block py-3 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-semibold shadow-lg shadow-teal-500/25 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.01] transition-all flex items-center justify-center gap-2"
-      >
-        <Code2 className="w-4 h-4" />
-        {mode === 'encode' ? 'Encode to Base64' : 'Decode from Base64'}
-      </button>
+      <div className="text-center">
+        <button
+          onClick={handleConvert}
+          className="px-8 py-3 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs shadow-sm transition-all"
+        >
+          {mode === 'encode' ? 'Encode to Base64' : 'Decode Base64'}
+        </button>
+      </div>
     </div>
   );
 }
 
-function ColorPalette() {
+// 4. URL Encoder / Decoder
+function UrlEncoderTool() {
+  const [input, setInput] = useState('https://example.com/search?q=ToolBox Pro&sort=desc&page=1');
+  const [output, setOutput] = useState('');
+  const [mode, setMode] = useState<'encode' | 'decode'>('encode');
+  const toast = useToast();
+
+  const handleConvert = () => {
+    try {
+      if (mode === 'encode') {
+        setOutput(encodeURIComponent(input));
+        toast.success('URL encoded!');
+      } else {
+        setOutput(decodeURIComponent(input));
+        toast.success('URL decoded!');
+      }
+    } catch {
+      toast.error('Invalid URL sequence to decode.');
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-center">
+        <div className="inline-flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1 text-xs font-semibold">
+          <button
+            onClick={() => setMode('encode')}
+            className={`px-4 py-1.5 rounded-lg transition-colors ${
+              mode === 'encode' ? 'bg-white dark:bg-slate-900 text-brand-600 shadow-xs' : 'text-slate-500'
+            }`}
+          >
+            Encode
+          </button>
+          <button
+            onClick={() => setMode('decode')}
+            className={`px-4 py-1.5 rounded-lg transition-colors ${
+              mode === 'decode' ? 'bg-white dark:bg-slate-900 text-brand-600 shadow-xs' : 'text-slate-500'
+            }`}
+          >
+            Decode
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
+          <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-2">Input String</span>
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className="w-full h-44 font-mono text-xs p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 focus:outline-none resize-y"
+          />
+        </div>
+
+        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Output</span>
+            {output && (
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(output);
+                  toast.success('Copied!');
+                }}
+                className="text-[11px] text-brand-600 font-semibold hover:underline"
+              >
+                Copy
+              </button>
+            )}
+          </div>
+          <div className="w-full h-44 font-mono text-xs p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 overflow-auto break-all">
+            {output || 'Output will appear here...'}
+          </div>
+        </div>
+      </div>
+
+      <div className="text-center">
+        <button
+          onClick={handleConvert}
+          className="px-8 py-3 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs shadow-sm transition-all"
+        >
+          {mode === 'encode' ? 'Encode URI Component' : 'Decode URI Component'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// 5. Color Palette Tool
+function ColorPaletteTool() {
   const [colors, setColors] = useState<string[]>([]);
   const [format, setFormat] = useState<'hex' | 'rgb' | 'hsl'>('hex');
   const toast = useToast();
 
-  const generateColors = () => {
-    const newColors: string[] = [];
+  const generateColors = useCallback(() => {
+    const list: string[] = [];
+    const baseHue = Math.floor(Math.random() * 360);
     for (let i = 0; i < 6; i++) {
-      const h = Math.floor(Math.random() * 360);
-      const s = 50 + Math.floor(Math.random() * 40);
-      const l = 35 + Math.floor(Math.random() * 35);
-      newColors.push(`hsl(${h}, ${s}%, ${l}%)`);
+      const h = (baseHue + i * 40) % 360;
+      const s = 65 + Math.floor(Math.random() * 25);
+      const l = 40 + Math.floor(Math.random() * 30);
+      list.push(`hsl(${h}, ${s}%, ${l}%)`);
     }
-    setColors(newColors);
-  };
+    setColors(list);
+  }, []);
 
-  const toHex = (hsl: string) => {
-    const match = hsl.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
-    if (!match) return '';
-    const [_, h, s, l] = match.map(Number);
-    const canvas = document.createElement('canvas');
-    canvas.width = 1; canvas.height = 1;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return '';
-    ctx.fillStyle = hsl;
-    ctx.fillRect(0, 0, 1, 1);
-    const data = ctx.getImageData(0, 0, 1, 1).data;
-    return `#${data[0].toString(16).padStart(2, '0')}${data[1].toString(16).padStart(2, '0')}${data[2].toString(16).padStart(2, '0')}`;
-  };
+  useEffect(() => {
+    generateColors();
+  }, [generateColors]);
 
-  const toRgb = (hsl: string) => {
-    const match = hsl.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
-    if (!match) return '';
-    const [_, h, s, l] = match.map(Number);
-    const canvas = document.createElement('canvas');
-    canvas.width = 1; canvas.height = 1;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return '';
-    ctx.fillStyle = hsl;
-    ctx.fillRect(0, 0, 1, 1);
-    const data = ctx.getImageData(0, 0, 1, 1).data;
-    return `rgb(${data[0]}, ${data[1]}, ${data[2]})`;
-  };
-
-  const getColorValue = (hsl: string) => {
-    if (format === 'hex') return toHex(hsl);
-    if (format === 'rgb') return toRgb(hsl);
-    return hsl;
-  };
-
-  const copyColor = (value: string) => {
-    navigator.clipboard.writeText(value);
-    toast.success(`Copied: ${value}`);
+  const copyColor = (col: string) => {
+    navigator.clipboard.writeText(col);
+    toast.success(`Copied color: ${col}`);
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <button
           onClick={generateColors}
-          className="px-8 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white font-semibold shadow-lg shadow-pink-500/25 hover:scale-[1.01] transition-all flex items-center gap-2"
+          className="px-6 py-2.5 rounded-xl bg-pink-600 hover:bg-pink-500 text-white font-bold text-xs shadow-sm transition-all flex items-center gap-2"
         >
           <RefreshCw className="w-4 h-4" />
-          Generate Palette
+          <span>Generate Harmonious Palette</span>
         </button>
-        <div className="inline-flex bg-slate-100 rounded-lg p-1">
-          {(['hex', 'rgb', 'hsl'] as const).map((f) => (
-            <button
-              key={f}
-              onClick={() => setFormat(f)}
-              className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${format === f ? 'bg-white shadow text-pink-600' : 'text-slate-600'}`}
-            >
-              {f.toUpperCase()}
-            </button>
-          ))}
-        </div>
+        <span className="text-xs text-slate-500">Click any swatch to copy value</span>
       </div>
 
-      {colors.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {colors.map((color, i) => {
-            const value = getColorValue(color);
-            return (
-              <button
-                key={i}
-                onClick={() => copyColor(value)}
-                className="group relative rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition-all animate-slide-up"
-                style={{ animationDelay: `${i * 0.05}s` }}
-              >
-                <div className="h-28 sm:h-36" style={{ backgroundColor: color }} />
-                <div className="p-3 bg-white text-center">
-                  <div className="text-xs font-mono font-semibold text-slate-700 truncate">{value}</div>
-                  <div className="text-[10px] text-slate-400 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity">Click to copy</div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      )}
-
-      {colors.length === 0 && (
-        <div className="text-center py-16">
-          <Palette className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-          <p className="text-slate-500">Click "Generate Palette" to create beautiful color combinations.</p>
-        </div>
-      )}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        {colors.map((color, i) => (
+          <button
+            key={i}
+            onClick={() => copyColor(color)}
+            className="group rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] shadow-xs hover:shadow-lg transition-all text-left"
+          >
+            <div className="h-28" style={{ backgroundColor: color }} />
+            <div className="p-3">
+              <span className="text-[11px] font-mono font-bold text-slate-800 dark:text-slate-200 block truncate">
+                {color}
+              </span>
+              <span className="text-[10px] text-slate-400 group-hover:text-brand-500 transition-colors">
+                Click to copy
+              </span>
+            </div>
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
 
-function SvgToPng() {
-  const [svgCode, setSvgCode] = useState('');
+// 6. Contrast Checker Tool (WCAG 2.1)
+function ContrastCheckerTool() {
+  const [fg, setFg] = useState('#0f172a');
+  const [bg, setBg] = useState('#ffffff');
+
+  const contrastRatio = useMemo(() => {
+    const getLuminance = (hex: string) => {
+      let clean = hex.replace('#', '');
+      if (clean.length === 3) clean = clean.split('').map((c) => c + c).join('');
+      const r = parseInt(clean.substring(0, 2), 16) / 255;
+      const g = parseInt(clean.substring(2, 4), 16) / 255;
+      const b = parseInt(clean.substring(4, 6), 16) / 255;
+
+      const a = [r, g, b].map((v) => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
+      return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+    };
+
+    try {
+      const l1 = getLuminance(fg);
+      const l2 = getLuminance(bg);
+      const ratio = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+      return parseFloat(ratio.toFixed(2));
+    } catch {
+      return 1;
+    }
+  }, [fg, bg]);
+
+  const passAA = contrastRatio >= 4.5;
+  const passAALarge = contrastRatio >= 3.0;
+  const passAAA = contrastRatio >= 7.0;
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 space-y-3">
+          <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
+            Foreground (Text) Color
+          </label>
+          <div className="flex items-center gap-3">
+            <input
+              type="color"
+              value={fg}
+              onChange={(e) => setFg(e.target.value)}
+              className="w-10 h-10 rounded-lg cursor-pointer border-none bg-transparent"
+            />
+            <input
+              type="text"
+              value={fg}
+              onChange={(e) => setFg(e.target.value)}
+              className="flex-1 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 font-mono text-xs uppercase"
+            />
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 space-y-3">
+          <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
+            Background Color
+          </label>
+          <div className="flex items-center gap-3">
+            <input
+              type="color"
+              value={bg}
+              onChange={(e) => setBg(e.target.value)}
+              className="w-10 h-10 rounded-lg cursor-pointer border-none bg-transparent"
+            />
+            <input
+              type="text"
+              value={bg}
+              onChange={(e) => setBg(e.target.value)}
+              className="flex-1 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 font-mono text-xs uppercase"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Live Preview Box */}
+      <div
+        className="rounded-3xl border border-slate-200 dark:border-slate-800 p-8 text-center transition-colors"
+        style={{ backgroundColor: bg, color: fg }}
+      >
+        <h3 className="text-2xl font-bold mb-2">WCAG Contrast Preview</h3>
+        <p className="text-sm max-w-md mx-auto">
+          The quick brown fox jumps over the lazy dog. Ensure readability across diverse screen brightness and accessibility requirements.
+        </p>
+      </div>
+
+      {/* Score and Badges */}
+      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span className="text-xs text-slate-400 block mb-0.5">Contrast Ratio</span>
+          <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
+            {contrastRatio} : 1
+          </span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 text-xs font-bold">
+          <span
+            className={`px-3 py-1.5 rounded-xl border ${
+              passAALarge
+                ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 border-emerald-200'
+                : 'bg-rose-50 dark:bg-rose-950 text-rose-600 border-rose-200'
+            }`}
+          >
+            AA Large {passAALarge ? '✓ PASS' : '✗ FAIL'}
+          </span>
+          <span
+            className={`px-3 py-1.5 rounded-xl border ${
+              passAA
+                ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 border-emerald-200'
+                : 'bg-rose-50 dark:bg-rose-950 text-rose-600 border-rose-200'
+            }`}
+          >
+            AA Normal (4.5:1) {passAA ? '✓ PASS' : '✗ FAIL'}
+          </span>
+          <span
+            className={`px-3 py-1.5 rounded-xl border ${
+              passAAA
+                ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 border-emerald-200'
+                : 'bg-rose-50 dark:bg-rose-950 text-rose-600 border-rose-200'
+            }`}
+          >
+            AAA Enhanced (7:1) {passAAA ? '✓ PASS' : '✗ FAIL'}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// 7. SVG to PNG Tool
+function SvgToPngTool() {
+  const [svgCode, setSvgCode] = useState(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="40" fill="#6366f1" />
+  <path d="M30 50 L45 65 L70 35" stroke="white" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`
+  );
   const [pngUrl, setPngUrl] = useState<string | null>(null);
   const [width, setWidth] = useState(512);
   const [height, setHeight] = useState(512);
   const toast = useToast();
 
   const convert = () => {
-    if (!svgCode.trim()) { toast.warning('Paste SVG code'); return; }
+    if (!svgCode.trim()) {
+      toast.warning('Please enter valid SVG markup.');
+      return;
+    }
+
     try {
       const blob = new Blob([svgCode], { type: 'image/svg+xml' });
       const url = URL.createObjectURL(blob);
-      const img = document.createElement('img');
+      const img = new Image();
+
       img.onload = () => {
         const canvas = document.createElement('canvas');
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d');
-        if (!ctx) { toast.error('Canvas error'); return; }
+        if (!ctx) return;
         ctx.drawImage(img, 0, 0, width, height);
+        URL.revokeObjectURL(url);
         setPngUrl(canvas.toDataURL('image/png'));
-        toast.success('SVG converted to PNG!');
+        toast.success('SVG rasterized to PNG!');
       };
-      img.onerror = () => toast.error('Invalid SVG');
+
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        toast.error('Could not render SVG. Please check XML syntax.');
+      };
+
       img.src = url;
     } catch {
-      toast.error('Conversion failed');
+      toast.error('Conversion failed.');
     }
   };
 
   const download = () => {
-    if (pngUrl) {
-      const a = document.createElement('a');
-      a.href = pngUrl;
-      a.download = 'converted.png';
-      a.click();
-      toast.success('PNG downloaded!');
-    }
-  };
-
-  const loadSample = () => {
-    setSvgCode(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <circle cx="50" cy="50" r="40" fill="#6366f1" />
-  <path d="M30 50 L45 65 L70 35" stroke="white" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>`);
+    if (!pngUrl) return;
+    const a = document.createElement('a');
+    a.href = pngUrl;
+    a.download = 'vector_converted.png';
+    a.click();
+    toast.success('Downloaded PNG!');
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200 bg-slate-50">
-          <span className="font-semibold text-sm text-slate-700">SVG Code</span>
-          <button onClick={loadSample} className="text-xs text-brand-600 hover:text-brand-700 font-medium">Load sample SVG</button>
-        </div>
+    <div className="space-y-6">
+      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs space-y-4">
+        <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
+          SVG Vector Markup
+        </span>
         <textarea
           value={svgCode}
           onChange={(e) => setSvgCode(e.target.value)}
-          placeholder='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">...</svg>'
-          className="w-full h-40 p-4 font-mono text-sm bg-white resize-none focus:outline-none placeholder:text-slate-400"
+          className="w-full h-40 font-mono text-xs p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 resize-y focus:outline-none"
         />
-      </div>
 
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <div className="flex items-center gap-3">
-          <div>
-            <label className="text-xs text-slate-500 block mb-1">Width</label>
+        <div className="flex flex-wrap items-center gap-4 text-xs font-bold">
+          <div className="flex items-center gap-2">
+            <span>Width:</span>
             <input
               type="number"
               value={width}
-              onChange={(e) => setWidth(parseInt(e.target.value) || 512)}
-              className="w-24 px-3 py-2 rounded-lg border border-slate-300 text-sm"
+              onChange={(e) => setWidth(parseInt(e.target.value, 10) || 512)}
+              className="w-20 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
             />
           </div>
-          <span className="text-slate-400 mt-5">×</span>
-          <div>
-            <label className="text-xs text-slate-500 block mb-1">Height</label>
+          <div className="flex items-center gap-2">
+            <span>Height:</span>
             <input
               type="number"
               value={height}
-              onChange={(e) => setHeight(parseInt(e.target.value) || 512)}
-              className="w-24 px-3 py-2 rounded-lg border border-slate-300 text-sm"
+              onChange={(e) => setHeight(parseInt(e.target.value, 10) || 512)}
+              className="w-20 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
             />
           </div>
+          <button
+            onClick={convert}
+            className="px-6 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white transition-all shadow-xs"
+          >
+            Render to PNG
+          </button>
         </div>
-        <button
-          onClick={convert}
-          disabled={!svgCode.trim()}
-          className="px-8 py-2.5 rounded-xl bg-gradient-to-r from-orange-600 to-red-600 text-white font-semibold shadow-lg shadow-orange-500/25 disabled:opacity-50 hover:scale-[1.01] transition-all flex items-center gap-2"
-        >
-          <Image className="w-4 h-4" />
-          Convert to PNG
-        </button>
       </div>
 
       {pngUrl && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 text-center">
-          <h3 className="font-semibold text-slate-800 mb-4">Preview</h3>
-          <img src={pngUrl} alt="Converted PNG" className="mx-auto rounded-xl border border-slate-200 max-h-64 object-contain mb-4" />
-          <button
-            onClick={download}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-colors"
-          >
-            <Download className="w-4 h-4" />
-            Download PNG ({width}×{height})
-          </button>
+        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 text-center space-y-4 shadow-xs animate-slide-up">
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 inline-block border border-slate-200 dark:border-slate-800">
+            <img src={pngUrl} alt="Rendered vector preview" className="max-h-60 mx-auto" />
+          </div>
+          <div>
+            <button
+              onClick={download}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-sm transition-all"
+            >
+              <Download className="w-4 h-4" />
+              <span>Download PNG ({width}×{height})</span>
+            </button>
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-async function sha256(message: string) {
-  const msgBuffer = new TextEncoder().encode(message);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-async function sha1(message: string) {
-  const msgBuffer = new TextEncoder().encode(message);
-  const hashBuffer = await crypto.subtle.digest('SHA-1', msgBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-function simpleMD5(message: string): string {
-  // Simple MD5 using Web Crypto is not available, so we implement a basic hash
-  // For production, use a proper MD5 library. Here we use a simpler approach.
-  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
-  for (let i = 0; i < message.length; i++) {
-    const ch = message.charCodeAt(i);
-    h1 = Math.imul(h1 ^ ch, 2654435761);
-    h2 = Math.imul(h2 ^ ch, 1597334677);
-  }
-  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
-  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-  return ((h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0')).padStart(32, '0');
-}
-
-function HashGenerator() {
-  const [text, setText] = useState('');
+// 8. Hash Generator (Native Web Crypto API)
+function HashGeneratorTool() {
+  const [text, setText] = useState('ToolBox Pro 2026');
   const [hashes, setHashes] = useState<Record<string, string>>({});
   const toast = useToast();
 
-  const generate = async () => {
-    if (!text.trim()) { toast.warning('Enter text'); return; }
-    try {
-      const sha256Hash = await sha256(text);
-      const sha1Hash = await sha1(text);
-      const md5Hash = simpleMD5(text);
-      setHashes({ 'SHA-256': sha256Hash, 'SHA-1': sha1Hash, 'MD5*': md5Hash });
-    } catch {
-      toast.error('Failed to generate hash');
+  const computeHashes = useCallback(async () => {
+    if (!text.trim()) {
+      setHashes({});
+      return;
     }
-  };
+
+    const enc = new TextEncoder().encode(text);
+    const algos = ['SHA-256', 'SHA-384', 'SHA-512', 'SHA-1'];
+    const results: Record<string, string> = {};
+
+    for (const algo of algos) {
+      const buffer = await crypto.subtle.digest(algo, enc);
+      const hex = Array.from(new Uint8Array(buffer))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('');
+      results[algo] = hex;
+    }
+
+    setHashes(results);
+  }, [text]);
+
+  useEffect(() => {
+    computeHashes();
+  }, [computeHashes]);
 
   const copyHash = (hash: string) => {
     navigator.clipboard.writeText(hash);
-    toast.success('Hash copied!');
+    toast.success('Checksum copied!');
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="px-5 py-3 border-b border-slate-200 bg-slate-50">
-          <span className="font-semibold text-sm text-slate-700">Input Text</span>
-        </div>
-        <input
-          type="text"
+    <div className="space-y-6">
+      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-3">
+        <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
+          Input Text to Hash
+        </label>
+        <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && generate()}
-          placeholder="Enter text to hash..."
-          className="w-full px-4 py-3 bg-white focus:outline-none placeholder:text-slate-400"
+          placeholder="Enter text to generate cryptographic checksums..."
+          className="w-full h-28 font-mono text-xs p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 resize-y focus:outline-none"
         />
       </div>
 
-      <button
-        onClick={generate}
-        disabled={!text.trim()}
-        className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 text-white font-semibold shadow-lg shadow-emerald-500/25 disabled:opacity-50 hover:scale-[1.01] transition-all flex items-center justify-center gap-2"
-      >
-        <Hash className="w-4 h-4" />
-        Generate Hashes
-      </button>
-
-      {Object.entries(hashes).length > 0 && (
-        <div className="space-y-3">
-          {Object.entries(hashes).map(([algo, hash]) => (
-            <div key={algo} className="bg-white rounded-xl border border-slate-200 overflow-hidden animate-slide-up">
-              <div className="flex items-center justify-between px-5 py-3 bg-slate-50 border-b border-slate-200">
-                <span className="font-semibold text-sm text-slate-700">{algo}</span>
-                <button onClick={() => copyHash(hash)} className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500 transition-colors">
-                  <Copy className="w-4 h-4" />
-                </button>
-              </div>
-              <div className="px-5 py-3">
-                <code className="text-sm font-mono text-slate-800 break-all">{hash}</code>
-              </div>
+      <div className="space-y-3">
+        {Object.entries(hashes).map(([algo, val]) => (
+          <div
+            key={algo}
+            className="p-4 rounded-2xl bg-white dark:bg-[#0f172a] border border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs"
+          >
+            <div className="min-w-0 flex-1">
+              <span className="text-[11px] font-bold text-brand-600 dark:text-brand-400 block mb-0.5">
+                {algo}
+              </span>
+              <p className="font-mono text-xs text-slate-800 dark:text-slate-200 break-all select-all">
+                {val}
+              </p>
             </div>
-          ))}
-        </div>
-      )}
-      <p className="text-xs text-slate-400 text-center">*MD5 is a simplified hash. For production use, use a proper MD5 library.</p>
+            <button
+              onClick={() => copyHash(val)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+            >
+              <Copy className="w-3.5 h-3.5" />
+              <span>Copy</span>
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-function JwtDecoder() {
-  const [token, setToken] = useState('');
-  const [header, setHeader] = useState<any>(null);
-  const [payload, setPayload] = useState<any>(null);
+// 9. JWT Decoder Tool
+function JwtDecoderTool() {
+  const [token, setToken] = useState(
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFyaWYgQWxpIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxODMxNjIzOTAyfQ.signature'
+  );
+  const [header, setHeader] = useState<Record<string, unknown> | null>(null);
+  const [payload, setPayload] = useState<Record<string, unknown> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const toast = useToast();
 
-  const decode = () => {
+  const decode = useCallback(() => {
     setError(null);
     setHeader(null);
     setPayload(null);
-    const trimmed = token.trim();
-    if (!trimmed) { setError('Enter a JWT token'); return; }
-    const parts = trimmed.split('.');
-    if (parts.length < 2) { setError('Invalid JWT format. Expected 3 parts separated by dots.'); return; }
-    try {
-      const decodeBase64 = (s: string) => {
-        const padded = s.replace(/-/g, '+').replace(/_/g, '/');
-        const json = decodeURIComponent(escape(atob(padded)));
-        return JSON.parse(json);
-      };
-      const h = decodeBase64(parts[0]);
-      const p = decodeBase64(parts[1]);
-      setHeader(h);
-      setPayload(p);
-      toast.success('JWT decoded successfully!');
-    } catch {
-      setError('Failed to decode JWT. Invalid Base64 payload.');
-    }
-  };
 
-  const fmt = (val: any, key: string): string => {
-    if (key === 'exp' || key === 'iat' || key === 'nbf' || key === 'auth_time') {
-      try {
-        const date = new Date(val * 1000);
-        return `${val} (${date.toLocaleString()})`;
-      } catch { return String(val); }
+    const trimmed = token.trim();
+    if (!trimmed) return;
+
+    const parts = trimmed.split('.');
+    if (parts.length < 2) {
+      setError('JWT requires at least 2 dot-separated base64 encoded parts.');
+      return;
     }
-    return typeof val === 'object' ? JSON.stringify(val, null, 2) : String(val);
-  };
+
+    try {
+      const b64Decode = (str: string) => {
+        const padded = str.replace(/-/g, '+').replace(/_/g, '/');
+        return JSON.parse(decodeURIComponent(escape(atob(padded))));
+      };
+
+      setHeader(b64Decode(parts[0]));
+      setPayload(b64Decode(parts[1]));
+    } catch {
+      setError('Invalid base64 encoding in JWT token.');
+    }
+  }, [token]);
+
+  useEffect(() => {
+    decode();
+  }, [decode]);
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="px-5 py-3 border-b border-slate-200 bg-slate-50">
-          <span className="font-semibold text-sm text-slate-700 flex items-center gap-2"><KeyRound className="w-4 h-4" /> JWT Token</span>
-        </div>
+    <div className="space-y-6">
+      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-3">
+        <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
+          Paste Raw JSON Web Token (JWT)
+        </label>
         <textarea
           value={token}
           onChange={(e) => setToken(e.target.value)}
-          placeholder="Paste your JWT token here (eyJhbGciOi...)"
-          className="w-full h-28 p-4 font-mono text-xs bg-white resize-none focus:outline-none placeholder:text-slate-400 break-all"
-          spellCheck={false}
+          placeholder="eyJhbGciOi..."
+          className="w-full h-24 font-mono text-xs p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 resize-y focus:outline-none break-all"
         />
+        {error && <p className="text-xs text-rose-500 font-semibold">{error}</p>}
       </div>
-
-      <button
-        onClick={decode}
-        disabled={!token.trim()}
-        className="w-full max-w-xs mx-auto block py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-semibold shadow-lg shadow-indigo-500/25 disabled:opacity-50 hover:scale-[1.01] transition-all flex items-center justify-center gap-2"
-      >
-        <KeyRound className="w-4 h-4" /> Decode JWT
-      </button>
-
-      {error && <div className="text-center text-red-500 text-sm">{error}</div>}
 
       {(header || payload) && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {header && (
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden animate-slide-up">
-              <div className="px-5 py-3 bg-red-50 border-b border-red-100"><span className="font-semibold text-sm text-red-600">Header</span></div>
-              <div className="p-4 space-y-2">
-                {Object.entries(header).map(([k, v]) => (
-                  <div key={k} className="text-sm">
-                    <span className="text-slate-500 font-medium">{k}:</span> <span className="text-slate-800 font-mono break-all">{fmt(v, k)}</span>
-                  </div>
-                ))}
-              </div>
+            <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
+              <span className="text-xs font-bold text-rose-500 block mb-2">Header (Algorithm &amp; Type)</span>
+              <pre className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 text-xs font-mono overflow-auto">
+                {JSON.stringify(header, null, 2)}
+              </pre>
             </div>
           )}
+
           {payload && (
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden animate-slide-up">
-              <div className="px-5 py-3 bg-purple-50 border-b border-purple-100"><span className="font-semibold text-sm text-purple-600">Payload</span></div>
-              <div className="p-4 space-y-2">
-                {Object.entries(payload).map(([k, v]) => (
-                  <div key={k} className="text-sm">
-                    <span className="text-slate-500 font-medium">{k}:</span> <span className="text-slate-800 font-mono break-all">{fmt(v, k)}</span>
-                  </div>
-                ))}
-              </div>
+            <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
+              <span className="text-xs font-bold text-indigo-500 block mb-2">Payload (Claims &amp; Data)</span>
+              <pre className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 text-xs font-mono overflow-auto">
+                {JSON.stringify(payload, null, 2)}
+              </pre>
             </div>
           )}
         </div>
       )}
-      <p className="text-xs text-slate-400 text-center">🔒 Decoding happens locally. Tokens are never sent to a server.</p>
+
+      <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-900/40 text-xs text-amber-800 dark:text-amber-300">
+        <strong>Security Notice:</strong> Tokens are decoded purely locally inside your browser. Because verification requires secret keys or JWKS public certificates, signature validation is not asserted.
+      </div>
     </div>
   );
 }
 
-function UuidGenerator() {
-  const [uuids, setUuids] = useState<string[]>([]);
+// 10. UUID Generator Tool
+function UuidGeneratorTool() {
   const [count, setCount] = useState(5);
-  const [version, setVersion] = useState<'v4' | 'short'>('v4');
-  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [uppercase, setUppercase] = useState(false);
+  const [noHyphens, setNoHyphens] = useState(false);
+  const [uuids, setUuids] = useState<string[]>([]);
   const toast = useToast();
 
-  const generate = () => {
-    const results: string[] = [];
+  const generate = useCallback(() => {
+    const list: string[] = [];
     for (let i = 0; i < count; i++) {
-      if (version === 'v4') {
-        results.push(crypto.randomUUID());
-      } else {
-        // Short ID (12 chars)
-        const arr = new Uint8Array(6);
-        crypto.getRandomValues(arr);
-        results.push(Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join(''));
-      }
-    }
-    setUuids(results);
-    setCopiedIndex(null);
-    toast.success(`Generated ${count} ${version === 'v4' ? 'UUID v4' : 'short ID'}s!`);
-  };
+      let id = crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = (Math.random() * 16) | 0;
+        const v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      });
 
-  const copyUuid = (uuid: string, index: number) => {
-    navigator.clipboard.writeText(uuid);
-    setCopiedIndex(index);
-    setTimeout(() => setCopiedIndex(null), 1500);
-    toast.success('Copied!');
-  };
+      if (noHyphens) id = id.replace(/-/g, '');
+      if (uppercase) id = id.toUpperCase();
+      list.push(id);
+    }
+    setUuids(list);
+  }, [count, uppercase, noHyphens]);
+
+  useEffect(() => {
+    generate();
+  }, [generate]);
 
   const copyAll = () => {
     navigator.clipboard.writeText(uuids.join('\n'));
-    toast.success('All copied to clipboard!');
+    toast.success(`Copied ${uuids.length} UUIDs to clipboard!`);
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-5">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="font-medium text-slate-700 mb-2 block">Count</label>
-            <input type="number" min={1} max={100} value={count} onChange={(e) => setCount(Math.min(100, Math.max(1, parseInt(e.target.value) || 1)))} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500" />
-          </div>
-          <div>
-            <label className="font-medium text-slate-700 mb-2 block">Type</label>
-            <select value={version} onChange={(e) => setVersion(e.target.value as 'v4' | 'short')} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 bg-white">
-              <option value="v4">UUID v4 (Standard)</option>
-              <option value="short">Short ID (12 chars)</option>
-            </select>
-          </div>
-        </div>
-        <button
-          onClick={generate}
-          className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 text-white font-semibold shadow-lg shadow-emerald-500/25 hover:scale-[1.01] transition-all flex items-center justify-center gap-2"
-        >
-          <Fingerprint className="w-4 h-4" /> Generate {count} {version === 'v4' ? 'UUIDs' : 'Short IDs'}
-        </button>
-      </div>
-
-      {uuids.length > 0 && (
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden animate-slide-up">
-          <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200 bg-slate-50">
-            <span className="font-semibold text-sm text-slate-700">{uuids.length} Generated</span>
-            <button onClick={copyAll} className="text-xs text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1"><Copy className="w-3 h-3" /> Copy all</button>
-          </div>
-          <div className="divide-y divide-slate-100">
-            {uuids.map((uuid, i) => (
-              <button key={i} onClick={() => copyUuid(uuid, i)} className="w-full flex items-center justify-between px-5 py-3 hover:bg-slate-50 transition-colors group">
-                <code className="text-sm font-mono text-slate-800 break-all">{uuid}</code>
-                {copiedIndex === i ? <Check className="w-4 h-4 text-green-500 flex-shrink-0 ml-3" /> : <Copy className="w-4 h-4 text-slate-300 group-hover:text-brand-500 flex-shrink-0 ml-3" />}
+    <div className="space-y-6">
+      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Count:</span>
+            {[1, 5, 10, 25].map((num) => (
+              <button
+                key={num}
+                onClick={() => setCount(num)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                  count === num
+                    ? 'bg-brand-600 text-white'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                }`}
+              >
+                {num}
               </button>
             ))}
           </div>
+
+          <div className="flex items-center gap-4 text-xs font-semibold">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={uppercase}
+                onChange={(e) => setUppercase(e.target.checked)}
+                className="w-4 h-4 rounded text-brand-600"
+              />
+              <span>Uppercase</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={noHyphens}
+                onChange={(e) => setNoHyphens(e.target.checked)}
+                className="w-4 h-4 rounded text-brand-600"
+              />
+              <span>Remove Hyphens</span>
+            </label>
+          </div>
         </div>
-      )}
+      </div>
+
+      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-3">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+            Generated UUIDs (v4 RFC-4122)
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={generate}
+              className="text-xs text-brand-600 font-bold hover:underline flex items-center gap-1"
+            >
+              <RefreshCw className="w-3.5 h-3.5" /> Regenerate
+            </button>
+            <button
+              onClick={copyAll}
+              className="text-xs px-3 py-1 rounded-lg bg-brand-600 text-white font-bold hover:bg-brand-500 transition-colors"
+            >
+              Copy All
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-2 max-h-72 overflow-y-auto">
+          {uuids.map((id, idx) => (
+            <div
+              key={idx}
+              className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-xs font-mono"
+            >
+              <span className="text-slate-800 dark:text-slate-200 select-all">{id}</span>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(id);
+                  toast.success('Copied UUID!');
+                }}
+                className="text-slate-400 hover:text-brand-600 p-1"
+              >
+                <Copy className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

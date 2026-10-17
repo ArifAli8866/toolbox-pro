@@ -148,5 +148,5 @@ export function formatFileSize(bytes: number): string {
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   const val = bytes / Math.pow(k, i);
-  return `${val.toFixed(val < 10 && i > 0 ? 2 : 1)} ${sizes[i]}`;
+  return `${parseFloat(val.toFixed(2))} ${sizes[i]}`;
 }
