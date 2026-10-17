@@ -110,7 +110,7 @@ export default function AppShell({
         {/* Main Application Area */}
         <div
           className={`flex-1 flex flex-col transition-all duration-300 min-w-0 ${
-            collapsed ? 'md:ml-20' : 'md:ml-64'
+            collapsed ? 'md:ml-[5.75rem]' : 'md:ml-[17.25rem]'
           }`}
         >
           {/* Top Navbar */}
@@ -123,10 +123,10 @@ export default function AppShell({
 
           {/* Optional Consistent Page Header */}
           {title && (
-            <div className="bg-white/50 dark:bg-[#0c1322]/50 border-b border-slate-200/80 dark:border-slate-800/80 px-4 sm:px-8 py-6">
+            <div className="mx-3 sm:mx-6 lg:mx-8 mt-4 rounded-2xl bg-white/70 dark:bg-[#0c1322]/70 border border-slate-200/90 dark:border-slate-800/80 px-5 sm:px-8 py-5 shadow-xs">
               <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2.5 mb-1">
                     <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                       {title}
                     </h1>
@@ -148,7 +148,7 @@ export default function AppShell({
           )}
 
           {/* Page Content */}
-          <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8 max-w-7xl w-full mx-auto">
+          <main className="flex-1 px-4 sm:px-6 lg:px-8 py-6 max-w-7xl w-full mx-auto">
             {children}
           </main>
 

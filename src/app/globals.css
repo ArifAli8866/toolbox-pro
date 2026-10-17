@@ -5,11 +5,11 @@
     --bg-page: #f8fafc;
     --bg-surface: #ffffff;
     --bg-surface-elevated: #ffffff;
-    --bg-surface-subtle: #f1f5f9;
+    --bg-surface-subtle: #f8fafc;
     --border-main: #e2e8f0;
     --border-hover: #cbd5e1;
     --text-primary: #0f172a;
-    --text-secondary: #475569;
+    --text-secondary: #334155;
     --text-muted: #64748b;
     --ring-focus: rgba(99, 102, 241, 0.4);
   }
@@ -38,6 +38,14 @@
   :focus-visible {
     outline: 2px solid var(--color-brand-500);
     outline-offset: 2px;
+  }
+
+  ::placeholder {
+    color: #94a3b8;
+  }
+
+  .dark ::placeholder {
+    color: #64748b;
   }
 }
 

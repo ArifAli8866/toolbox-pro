@@ -74,9 +74,9 @@ export default function Sidebar({
     const isCollapsed = !isMobile && collapsed;
 
     return (
-      <div className="flex flex-col h-full bg-white dark:bg-[#0c1322] border-r border-slate-200/80 dark:border-slate-800/80 transition-all duration-300">
+      <div className="flex flex-col h-full bg-white dark:bg-[#0c1322] md:rounded-2xl border border-slate-200/90 dark:border-slate-800/90 shadow-sm transition-all duration-300 overflow-hidden">
         {/* Brand Header */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-200/80 dark:border-slate-800/80">
+        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 dark:border-slate-800/80">
           <Link
             href="/"
             onClick={() => isMobile && onCloseMobile()}
@@ -110,21 +110,21 @@ export default function Sidebar({
 
         {/* Quick Tools Access Bar */}
         <div className="px-3 py-3 border-b border-slate-100 dark:border-slate-800/50">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5 p-1 bg-slate-100/70 dark:bg-slate-900/50 rounded-xl border border-slate-200/60 dark:border-slate-800/50">
             <Link
               href="/#favorites"
               onClick={() => isMobile && onCloseMobile()}
               title="Favorite Tools"
               className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-medium transition-colors ${
                 pathname === '/#favorites'
-                  ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  ? 'bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-300 shadow-xs font-semibold'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
               {!isCollapsed && <span>Favorites</span>}
               {!isCollapsed && favoritesCount > 0 && (
-                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 font-semibold">
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 font-semibold">
                   {favoritesCount}
                 </span>
               )}
@@ -136,14 +136,14 @@ export default function Sidebar({
               title="Recently Used"
               className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-medium transition-colors ${
                 pathname === '/#recent'
-                  ? 'bg-brand-50 text-brand-700 dark:bg-brand-950/40 dark:text-brand-300'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  ? 'bg-white dark:bg-slate-800 text-brand-700 dark:text-brand-300 shadow-xs font-semibold'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <Clock className="w-3.5 h-3.5 text-brand-500" />
               {!isCollapsed && <span>Recent</span>}
               {!isCollapsed && recentCount > 0 && (
-                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-300 font-semibold">
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-brand-100 dark:bg-brand-900/60 text-brand-700 dark:text-brand-300 font-semibold">
                   {recentCount}
                 </span>
               )}
@@ -160,7 +160,7 @@ export default function Sidebar({
                 Workspaces
               </div>
             )}
-            <nav className="space-y-1">
+            <nav className="space-y-1.5">
               {mainNavItems.map((item) => {
                 const isActive = item.matchExact
                   ? pathname === item.href
@@ -174,10 +174,10 @@ export default function Sidebar({
                     href={item.href}
                     onClick={() => isMobile && onCloseMobile()}
                     title={isCollapsed ? item.label : undefined}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all group ${
+                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all group ${
                       isActive
-                        ? 'bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300 font-semibold shadow-xs'
-                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/70'
+                        ? 'bg-brand-50 text-brand-700 dark:bg-brand-950/50 dark:text-brand-300 font-semibold border border-brand-200/60 dark:border-brand-800/50 shadow-xs'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-slate-800/70'
                     }`}
                   >
                     <Icon
@@ -268,7 +268,7 @@ export default function Sidebar({
       {/* Desktop Sidebar */}
       <aside
         aria-label="Desktop Navigation"
-        className={`hidden md:block fixed inset-y-0 left-0 z-30 transition-all duration-300 ${
+        className={`hidden md:block fixed top-3 bottom-3 left-3 z-30 transition-all duration-300 ${
           collapsed ? 'w-20' : 'w-64'
         }`}
       >
@@ -288,7 +288,7 @@ export default function Sidebar({
             onClick={onCloseMobile}
             aria-hidden="true"
           />
-          <div className="fixed inset-y-0 left-0 w-72 max-w-[85vw] shadow-2xl animate-slide-in-right">
+          <div className="fixed inset-y-0 left-0 w-72 max-w-[85vw] shadow-2xl animate-slide-in-right rounded-r-2xl overflow-hidden">
             {renderContent(true)}
           </div>
         </div>
