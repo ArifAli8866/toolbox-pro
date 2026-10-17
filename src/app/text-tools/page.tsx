@@ -196,7 +196,7 @@ function JSONFormatterWorkspace() {
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Input */}
-        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-xs flex flex-col">
+        <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-xs flex flex-col">
           <div className="flex items-center justify-between px-5 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/60">
             <span className="font-bold text-xs text-slate-700 dark:text-slate-300">
               Input JSON
@@ -231,7 +231,7 @@ function JSONFormatterWorkspace() {
         </div>
 
         {/* Output */}
-        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-xs flex flex-col">
+        <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-xs flex flex-col">
           <div className="flex items-center justify-between px-5 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/60">
             <span className="font-bold text-xs text-slate-700 dark:text-slate-300">
               Formatted Result
@@ -348,7 +348,7 @@ function DiffCheckerWorkspace() {
     <div className="space-y-6">
       {/* Editor Inputs */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4">
+        <div className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4">
           <span className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-2">
             Original Text (Before)
           </span>
@@ -358,7 +358,7 @@ function DiffCheckerWorkspace() {
             className="w-full h-48 font-mono text-xs bg-slate-50/60 dark:bg-slate-900/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none resize-y"
           />
         </div>
-        <div className="bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4">
+        <div className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4">
           <span className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-2">
             Modified Text (After)
           </span>
@@ -384,7 +384,7 @@ function DiffCheckerWorkspace() {
       </div>
 
       {/* Visual Diff View */}
-      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-xs">
+      <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-xs">
         <div className="px-5 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center justify-between">
           <span>Unified Diff Output</span>
         </div>
@@ -448,7 +448,7 @@ function CsvJsonWorkspace() {
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* CSV */}
-        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs flex flex-col">
+        <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs flex flex-col">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-bold text-slate-800 dark:text-slate-200">CSV Data</span>
             <button
@@ -470,7 +470,7 @@ function CsvJsonWorkspace() {
         </div>
 
         {/* JSON */}
-        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs flex flex-col">
+        <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs flex flex-col">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-bold text-slate-800 dark:text-slate-200">JSON Array</span>
             <button
@@ -552,7 +552,7 @@ function CaseConverterWorkspace() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-4">
+      <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Enter Input Text</span>
           <div className="flex items-center gap-2">
@@ -589,7 +589,7 @@ function CaseConverterWorkspace() {
               type="button"
               onClick={() => convertAndCopy(name)}
               disabled={!text}
-              className="p-4 rounded-2xl bg-white dark:bg-[#0f172a] border border-slate-200/80 dark:border-slate-800 hover:border-brand-300 dark:hover:border-brand-700 hover:shadow-md text-left transition-all disabled:opacity-50 group"
+              className="p-4 rounded-2xl bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-slate-800 hover:border-brand-300 dark:hover:border-brand-700 hover:shadow-md text-left transition-all disabled:opacity-50 group"
             >
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1 group-hover:text-brand-500 transition-colors">
                 {name}
@@ -650,7 +650,7 @@ function WordCounterWorkspace() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs">
+      <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs">
         <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-2">
           Your Text Content
         </span>
@@ -675,7 +675,7 @@ function WordCounterWorkspace() {
         ].map((item) => (
           <div
             key={item.label}
-            className="p-4 rounded-2xl bg-white dark:bg-[#0f172a] border border-slate-200/80 dark:border-slate-800 text-center"
+            className="p-4 rounded-2xl bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-slate-800 text-center"
           >
             <div className="text-lg font-extrabold text-slate-900 dark:text-white">{item.val}</div>
             <div className="text-[11px] text-slate-400 mt-0.5">{item.label}</div>
@@ -685,7 +685,7 @@ function WordCounterWorkspace() {
 
       {/* Keyword Density */}
       {metrics.topKeywords.length > 0 && (
-        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-3">
+        <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-3">
           <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
             <Heading2 className="w-3.5 h-3.5 text-brand-500" />
             <span>Keyword Density</span>

@@ -25,10 +25,10 @@ export default function ThemeToggle() {
         onClick={() => setOpen(!open)}
         aria-label="Toggle theme"
         aria-expanded={open}
-        className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+        className="p-1.5 rounded-[9px] text-[#475569] dark:text-[#a1a1ab] hover:text-[#0f172a] dark:hover:text-white bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
       >
         {resolvedTheme === 'dark' ? (
-          <Moon className="w-4 h-4 text-brand-400" />
+          <Moon className="w-4 h-4 text-[#0a84ff]" />
         ) : (
           <Sun className="w-4 h-4 text-amber-500" />
         )}
@@ -38,7 +38,7 @@ export default function ThemeToggle() {
         <div
           role="menu"
           aria-label="Select color theme"
-          className="absolute right-0 mt-2 w-36 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl z-50 animate-slide-up text-xs font-medium"
+          className="absolute right-0 mt-2 w-36 py-1.5 rounded-xl bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] shadow-saas-card z-50 animate-slide-up text-xs font-medium"
         >
           <button
             role="menuitem"
@@ -46,10 +46,10 @@ export default function ThemeToggle() {
               setTheme('light');
               setOpen(false);
             }}
-            className={`w-full flex items-center gap-2.5 px-3 py-2 text-left transition-colors ${
+            className={`w-full flex items-center gap-2.5 px-3 py-2 text-left rounded-[6px] mx-1 transition-colors ${
               theme === 'light'
-                ? 'text-brand-600 dark:text-brand-400 bg-brand-50/50 dark:bg-brand-950/30'
-                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                ? 'text-[#2563eb] dark:text-[#0a84ff] bg-blue-50/70 dark:bg-blue-950/40 font-semibold'
+                : 'text-[#475569] dark:text-[#a1a1ab] hover:bg-black/[0.04] dark:hover:bg-white/[0.06]'
             }`}
           >
             <Sun className="w-3.5 h-3.5 text-amber-500" />
@@ -62,13 +62,13 @@ export default function ThemeToggle() {
               setTheme('dark');
               setOpen(false);
             }}
-            className={`w-full flex items-center gap-2.5 px-3 py-2 text-left transition-colors ${
+            className={`w-full flex items-center gap-2.5 px-3 py-2 text-left rounded-[6px] mx-1 transition-colors ${
               theme === 'dark'
-                ? 'text-brand-600 dark:text-brand-400 bg-brand-50/50 dark:bg-brand-950/30'
-                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                ? 'text-[#2563eb] dark:text-[#0a84ff] bg-blue-50/70 dark:bg-blue-950/40 font-semibold'
+                : 'text-[#475569] dark:text-[#a1a1ab] hover:bg-black/[0.04] dark:hover:bg-white/[0.06]'
             }`}
           >
-            <Moon className="w-3.5 h-3.5 text-brand-400" />
+            <Moon className="w-3.5 h-3.5 text-[#0a84ff]" />
             <span>Dark</span>
           </button>
 
@@ -78,13 +78,13 @@ export default function ThemeToggle() {
               setTheme('system');
               setOpen(false);
             }}
-            className={`w-full flex items-center gap-2.5 px-3 py-2 text-left transition-colors ${
+            className={`w-full flex items-center gap-2.5 px-3 py-2 text-left rounded-[6px] mx-1 transition-colors ${
               theme === 'system'
-                ? 'text-brand-600 dark:text-brand-400 bg-brand-50/50 dark:bg-brand-950/30'
-                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                ? 'text-[#2563eb] dark:text-[#0a84ff] bg-blue-50/70 dark:bg-blue-950/40 font-semibold'
+                : 'text-[#475569] dark:text-[#a1a1ab] hover:bg-black/[0.04] dark:hover:bg-white/[0.06]'
             }`}
           >
-            <Laptop className="w-3.5 h-3.5 text-slate-400" />
+            <Laptop className="w-3.5 h-3.5 text-[#64748b] dark:text-[#7b7b85]" />
             <span>System</span>
           </button>
         </div>

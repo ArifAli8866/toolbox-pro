@@ -191,7 +191,7 @@ function BackgroundRemoverView() {
           if (e.dataTransfer.files?.[0]) handleFile(e.dataTransfer.files[0]);
         }}
         onClick={() => fileInputRef.current?.click()}
-        className={`border-2 border-dashed rounded-3xl p-10 text-center transition-all cursor-pointer bg-white dark:bg-[#0f172a] ${
+        className={`border-2 border-dashed rounded-3xl p-10 text-center transition-all cursor-pointer bg-white dark:bg-[#1e1e21] ${
           dragOver
             ? 'border-brand-500 bg-brand-50/40 dark:bg-brand-950/20'
             : 'border-slate-200 dark:border-slate-800 hover:border-brand-300 dark:hover:border-brand-700'
@@ -260,7 +260,7 @@ function BackgroundRemoverView() {
 
       {/* Result Split View with Checkered Background */}
       {resultUrl && (
-        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 space-y-6 animate-slide-up shadow-sm">
+        <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 space-y-6 animate-slide-up shadow-sm">
           <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
             <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
               <Check className="w-5 h-5 text-emerald-500" />
@@ -417,7 +417,7 @@ function ImageToTextView() {
   return (
     <div className="space-y-6">
       {/* Settings Row */}
-      <div className="bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex flex-wrap items-center justify-between gap-4">
+      <div className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <ScanText className="w-4 h-4 text-brand-500" />
           <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
@@ -449,7 +449,7 @@ function ImageToTextView() {
           if (e.dataTransfer.files?.[0]) handleFile(e.dataTransfer.files[0]);
         }}
         onClick={() => fileInputRef.current?.click()}
-        className={`border-2 border-dashed rounded-3xl p-10 text-center transition-all cursor-pointer bg-white dark:bg-[#0f172a] ${
+        className={`border-2 border-dashed rounded-3xl p-10 text-center transition-all cursor-pointer bg-white dark:bg-[#1e1e21] ${
           dragOver
             ? 'border-brand-500 bg-brand-50/40 dark:bg-brand-950/20'
             : 'border-slate-200 dark:border-slate-800 hover:border-brand-300 dark:hover:border-brand-700'
@@ -508,7 +508,7 @@ function ImageToTextView() {
 
       {/* Extracted Output Area */}
       {text && (
-        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-sm animate-slide-up">
+        <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-sm animate-slide-up">
           <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
             <div className="flex items-center gap-2">
               <FileText className="w-4 h-4 text-brand-500" />

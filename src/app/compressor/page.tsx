@@ -463,7 +463,7 @@ export default function CompressorPage() {
 
         {/* Compression Controls for Images */}
         {mode === 'image' && (
-          <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xs">
+          <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xs">
             {/* Quality Slider */}
             <div>
               <div className="flex items-center justify-between mb-2">
@@ -601,7 +601,7 @@ export default function CompressorPage() {
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
-          className={`border-2 border-dashed rounded-3xl p-8 sm:p-10 text-center transition-all cursor-pointer bg-white dark:bg-[#0f172a] ${
+          className={`border-2 border-dashed rounded-3xl p-8 sm:p-10 text-center transition-all cursor-pointer bg-white dark:bg-[#1e1e21] ${
             dragOver
               ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-950/20'
               : 'border-slate-200 dark:border-slate-800 hover:border-brand-300 dark:hover:border-brand-700'
@@ -650,7 +650,7 @@ export default function CompressorPage() {
         {mode === 'image' && imageQueue.length > 0 && (
           <div className="space-y-6">
             {/* Queue Header & Actions */}
-            <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-xs">
+            <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-xs">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2">
@@ -768,7 +768,7 @@ export default function CompressorPage() {
                     className={`group relative p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
                       isSelected
                         ? 'border-brand-500 bg-brand-50/20 dark:bg-brand-950/20 ring-2 ring-brand-500/20 shadow-xs'
-                        : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#0f172a] hover:border-slate-300 dark:hover:border-slate-700'
+                        : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#1e1e21] hover:border-slate-300 dark:hover:border-slate-700'
                     }`}
                   >
                     <div className="flex items-start gap-3">
@@ -866,7 +866,7 @@ export default function CompressorPage() {
 
             {/* Before and After Visual Comparison Results for Active Selected Item */}
             {activeImage && activeImage.status === 'done' && activeImage.result && (
-              <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-100 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-saas-card animate-slide-up">
+              <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-100 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-saas-card animate-slide-up">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
                   <div className="flex items-center gap-2.5">
                     <Check className="w-5 h-5 text-emerald-500 flex-shrink-0" />
@@ -982,7 +982,7 @@ export default function CompressorPage() {
         {/* PDF QUEUE SECTION */}
         {mode === 'pdf' && pdfQueue.length > 0 && (
           <div className="space-y-6">
-            <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-xs">
+            <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-xs">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <h3 className="font-bold text-slate-900 dark:text-white text-base">
@@ -1074,7 +1074,7 @@ export default function CompressorPage() {
               {pdfQueue.map((item, idx) => (
                 <div
                   key={item.id}
-                  className="bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex items-center justify-between gap-4 shadow-xs"
+                  className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 flex items-center justify-between gap-4 shadow-xs"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center flex-shrink-0">

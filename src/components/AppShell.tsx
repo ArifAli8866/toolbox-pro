@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
-import Footer from './Footer';
 import SearchDialog from './SearchDialog';
 import { ToastProvider } from './Toast';
 import { BreadcrumbItem } from './Breadcrumbs';
@@ -95,7 +94,7 @@ export default function AppShell({
 
   return (
     <ToastProvider>
-      <div className="min-h-screen bg-white dark:bg-[#090d16] text-slate-900 dark:text-slate-100 flex flex-col antialiased">
+      <div className="min-h-screen bg-[#f0f2f7] dark:bg-[#0e0e10] text-[#0f172a] dark:text-[#f1f1f4] flex flex-col antialiased">
         {/* Left Sidebar */}
         <Sidebar
           collapsed={collapsed}
@@ -123,21 +122,21 @@ export default function AppShell({
 
           {/* Optional Consistent Page Header */}
           {title && (
-            <div className="mx-3 sm:mx-6 lg:mx-8 mt-4 rounded-3xl bg-white/90 dark:bg-[#0c1322]/90 border border-slate-200/70 dark:border-slate-800/80 px-6 sm:px-8 py-5 shadow-saas-card">
+            <div className="mx-3 sm:mx-6 lg:mx-8 mt-4 rounded-2xl bg-white dark:bg-[#1e1e21] border border-black/[0.06] dark:border-white/[0.08] px-6 sm:px-8 py-5 shadow-saas-card">
               <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2.5 mb-1">
-                    <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0f172a] dark:text-white tracking-tight">
                       {title}
                     </h1>
                     {badge && (
-                      <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#eff6ff] dark:bg-blue-950/60 text-[#2563eb] dark:text-blue-300 border border-blue-200 dark:border-blue-900">
                         {badge}
                       </span>
                     )}
                   </div>
                   {subtitle && (
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
+                    <p className="text-xs sm:text-sm text-[#64748b] dark:text-[#a1a1ab] max-w-2xl">
                       {subtitle}
                     </p>
                   )}
@@ -148,12 +147,9 @@ export default function AppShell({
           )}
 
           {/* Page Content */}
-          <main className="flex-1 px-4 sm:px-6 lg:px-8 py-6 max-w-7xl w-full mx-auto">
+          <main className="flex-1 px-4 sm:px-6 lg:px-8 py-6 pb-16 max-w-7xl w-full mx-auto">
             {children}
           </main>
-
-          {/* Universal Footer */}
-          <Footer />
         </div>
 
         {/* Global Search Dialog Modal */}

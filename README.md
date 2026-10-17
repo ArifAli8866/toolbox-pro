@@ -112,16 +112,15 @@ Tool-box_Upgrade/
 │   │   ├── utilities/      # Utilities (Password, QR, Base64, URL, Color, WCAG, Hash, JWT, UUID)
 │   │   └── more-tools/     # Productivity (Favicon, Batch Renamer, Screenshot, Currency, Markdown)
 │   ├── components/         # Reusable design system components
-│   │   ├── AppShell.tsx    # Responsive shell (collapsible sidebar, header, footer)
-│   │   ├── Sidebar.tsx     # Navigation drawer with active route pills
+│   │   ├── AppShell.tsx    # Responsive shell (collapsible sidebar, toolbar header)
+│   │   ├── Sidebar.tsx     # Navigation drawer with Sift-styled active route pills
 │   │   ├── Header.tsx      # Top bar with breadcrumbs, Cmd+K trigger, theme toggle
 │   │   ├── SearchDialog.tsx# Command palette with fuzzy search & favorite pinning
 │   │   ├── ToolCard.tsx    # Card component with category badges & hover states
 │   │   ├── ThemeToggle.tsx # Light/Dark/System theme selector
-│   │   ├── ThemeProvider.tsx # Theme context manager
+│   │   ├── ThemeProvider.tsx # Theme context manager (supporting data-theme & colorScheme)
 │   │   ├── Toast.tsx       # Toast notifications provider
-│   │   ├── Breadcrumbs.tsx # Dynamic hierarchical navigation links
-│   │   └── Footer.tsx      # Platform footer
+│   │   └── Breadcrumbs.tsx # Dynamic hierarchical navigation links
 │   ├── lib/                # Core utility algorithms & domain logic
 │   │   ├── toolsCatalog.ts # Single source of truth for all tools and categories
 │   │   ├── personalization.ts # Favorites & recent tools persistence

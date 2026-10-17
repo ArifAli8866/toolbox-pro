@@ -513,7 +513,7 @@ export default function ConverterPage() {
                 className={`p-4 rounded-2xl border text-left transition-all ${
                   isSelected
                     ? 'border-brand-500 bg-brand-50/80 dark:bg-brand-950/40 shadow-sm ring-1 ring-brand-500'
-                    : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-[#0f172a] shadow-saas-card hover:border-slate-200 dark:hover:border-slate-700'
+                    : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-[#1e1e21] shadow-saas-card hover:border-slate-200 dark:hover:border-slate-700'
                 }`}
               >
                 <Icon
@@ -540,7 +540,7 @@ export default function ConverterPage() {
 
         {/* 1. Image Format Settings */}
         {mode === 'image' && (
-          <div className="bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-4">
+          <div className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">
@@ -588,7 +588,7 @@ export default function ConverterPage() {
 
         {/* 2. Image to PDF Settings */}
         {mode === 'image-to-pdf' && (
-          <div className="bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-4">
+          <div className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-4">
             <div className="flex items-center gap-2 mb-1">
               <Settings2 className="w-4 h-4 text-brand-500" />
               <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
@@ -660,7 +660,7 @@ export default function ConverterPage() {
 
         {/* 3. PDF Extract Settings */}
         {mode === 'pdf-extract' && pdfPageCount && (
-          <div className="bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-4">
+          <div className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-4">
             <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">
               Page Range Selection (Document has {pdfPageCount} pages)
             </span>
@@ -695,7 +695,7 @@ export default function ConverterPage() {
 
         {/* 4. PDF Rotate Settings */}
         {mode === 'pdf-rotate' && (
-          <div className="bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-3">
+          <div className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-3">
             <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">
               Rotation Degree
             </span>
@@ -720,7 +720,7 @@ export default function ConverterPage() {
 
         {/* 5. PDF Password Settings */}
         {mode === 'pdf-password' && (
-          <div className="bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-3">
+          <div className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-3">
             <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">
               Set Document Protection Password
             </span>
@@ -752,7 +752,7 @@ export default function ConverterPage() {
             }
           }}
           onClick={() => fileInputRef.current?.click()}
-          className={`border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center transition-all cursor-pointer bg-white dark:bg-[#0f172a] ${
+          className={`border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center transition-all cursor-pointer bg-white dark:bg-[#1e1e21] ${
             dragOver
               ? 'border-brand-500 bg-brand-50/40 dark:bg-brand-950/20'
               : 'border-slate-300 dark:border-slate-700 hover:border-brand-500 dark:hover:border-brand-400'
@@ -827,7 +827,7 @@ export default function ConverterPage() {
               {queue.map((item, index) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between gap-3 p-3 rounded-2xl bg-white dark:bg-[#0f172a] border border-slate-100 dark:border-slate-800 shadow-xs hover:border-slate-200 dark:hover:border-slate-700 transition-colors"
+                  className="flex items-center justify-between gap-3 p-3 rounded-2xl bg-white dark:bg-[#1e1e21] border border-slate-100 dark:border-slate-800 shadow-xs hover:border-slate-200 dark:hover:border-slate-700 transition-colors"
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     {/* Mode specific badge / page indicator */}
@@ -955,7 +955,7 @@ export default function ConverterPage() {
 
         {/* 1. Combined PDF Result (Images to PDF or PDF Merge) */}
         {combinedPdfBlob && (
-          <div className="bg-white dark:bg-[#0f172a] rounded-2xl border border-emerald-200 dark:border-emerald-800/80 p-6 shadow-sm space-y-4 animate-slide-up">
+          <div className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-emerald-200 dark:border-emerald-800/80 p-6 shadow-sm space-y-4 animate-slide-up">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
@@ -983,7 +983,7 @@ export default function ConverterPage() {
 
         {/* 2. Converted Images Batch Results (Image to Format) */}
         {convertedImages.length > 0 && (
-          <div className="bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-sm space-y-4 animate-slide-up">
+          <div className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-sm space-y-4 animate-slide-up">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
               <div>
                 <h4 className="text-sm font-bold text-slate-900 dark:text-white">
@@ -1039,7 +1039,7 @@ export default function ConverterPage() {
 
         {/* 3. Extracted PDF Pages Gallery (PDF to Images) */}
         {extractedPages.length > 0 && (
-          <div className="bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-sm space-y-4 animate-slide-up">
+          <div className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-sm space-y-4 animate-slide-up">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
               <div>
                 <h4 className="text-sm font-bold text-slate-900 dark:text-white">

@@ -209,7 +209,7 @@ function PasswordGeneratorTool() {
   return (
     <div className="space-y-6">
       {/* Password Output Card */}
-      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-4">
+      <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Shield className="w-4 h-4 text-emerald-500" />
@@ -264,7 +264,7 @@ function PasswordGeneratorTool() {
       </div>
 
       {/* Options */}
-      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-5">
+      <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-5">
         <div>
           <div className="flex justify-between items-center text-xs font-bold text-slate-800 dark:text-slate-200 mb-2">
             <span>Password Length: {length}</span>
@@ -357,7 +357,7 @@ function QRGeneratorTool() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-4">
+      <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-4">
         <div>
           <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">
             Content, URL, or WiFi String
@@ -388,7 +388,7 @@ function QRGeneratorTool() {
       </div>
 
       {qrDataUrl && (
-        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-8 text-center shadow-xs animate-slide-up space-y-4">
+        <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-8 text-center shadow-xs animate-slide-up space-y-4">
           <div className="inline-block p-4 rounded-2xl bg-white shadow-md border border-slate-100">
             <img src={qrDataUrl} alt="Generated QR code" className="mx-auto rounded-lg" />
           </div>
@@ -466,7 +466,7 @@ function Base64Tool() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
+        <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
           <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-2">
             {mode === 'encode' ? 'Plain Text to Encode' : 'Base64 to Decode'}
           </span>
@@ -477,7 +477,7 @@ function Base64Tool() {
           />
         </div>
 
-        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
+        <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Result</span>
             {output && (
@@ -559,7 +559,7 @@ function UrlEncoderTool() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
+        <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
           <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-2">Input String</span>
           <textarea
             value={input}
@@ -568,7 +568,7 @@ function UrlEncoderTool() {
           />
         </div>
 
-        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
+        <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Output</span>
             {output && (
@@ -646,7 +646,7 @@ function ColorPaletteTool() {
           <button
             key={i}
             onClick={() => copyColor(color)}
-            className="group rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] shadow-xs hover:shadow-lg transition-all text-left"
+            className="group rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1e1e21] shadow-xs hover:shadow-lg transition-all text-left"
           >
             <div className="h-28" style={{ backgroundColor: color }} />
             <div className="p-3">
@@ -698,7 +698,7 @@ function ContrastCheckerTool() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 space-y-3">
+        <div className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 space-y-3">
           <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
             Foreground (Text) Color
           </label>
@@ -718,7 +718,7 @@ function ContrastCheckerTool() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 space-y-3">
+        <div className="bg-white dark:bg-[#1e1e21] rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 space-y-3">
           <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
             Background Color
           </label>
@@ -751,7 +751,7 @@ function ContrastCheckerTool() {
       </div>
 
       {/* Score and Badges */}
-      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 flex flex-wrap items-center justify-between gap-4">
+      <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <span className="text-xs text-slate-400 block mb-0.5">Contrast Ratio</span>
           <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
@@ -851,7 +851,7 @@ function SvgToPngTool() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs space-y-4">
+      <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs space-y-4">
         <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
           SVG Vector Markup
         </span>
@@ -890,7 +890,7 @@ function SvgToPngTool() {
       </div>
 
       {pngUrl && (
-        <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 text-center space-y-4 shadow-xs animate-slide-up">
+        <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 text-center space-y-4 shadow-xs animate-slide-up">
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 inline-block border border-slate-200 dark:border-slate-800">
             <img src={pngUrl} alt="Rendered vector preview" className="max-h-60 mx-auto" />
           </div>
@@ -947,7 +947,7 @@ function HashGeneratorTool() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-3">
+      <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-3">
         <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
           Input Text to Hash
         </label>
@@ -963,7 +963,7 @@ function HashGeneratorTool() {
         {Object.entries(hashes).map(([algo, val]) => (
           <div
             key={algo}
-            className="p-4 rounded-2xl bg-white dark:bg-[#0f172a] border border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs"
+            className="p-4 rounded-2xl bg-white dark:bg-[#1e1e21] border border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs"
           >
             <div className="min-w-0 flex-1">
               <span className="text-[11px] font-bold text-brand-600 dark:text-brand-400 block mb-0.5">
@@ -1030,7 +1030,7 @@ function JwtDecoderTool() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-3">
+      <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-3">
         <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
           Paste Raw JSON Web Token (JWT)
         </label>
@@ -1046,7 +1046,7 @@ function JwtDecoderTool() {
       {(header || payload) && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {header && (
-            <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
+            <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
               <span className="text-xs font-bold text-rose-500 block mb-2">Header (Algorithm &amp; Type)</span>
               <pre className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 text-xs font-mono overflow-auto">
                 {JSON.stringify(header, null, 2)}
@@ -1055,7 +1055,7 @@ function JwtDecoderTool() {
           )}
 
           {payload && (
-            <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
+            <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs">
               <span className="text-xs font-bold text-indigo-500 block mb-2">Payload (Claims &amp; Data)</span>
               <pre className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 text-xs font-mono overflow-auto">
                 {JSON.stringify(payload, null, 2)}
@@ -1107,7 +1107,7 @@ function UuidGeneratorTool() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-4">
+      <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Count:</span>
@@ -1149,7 +1149,7 @@ function UuidGeneratorTool() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-3">
+      <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-3">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
             Generated UUIDs (v4 RFC-4122)

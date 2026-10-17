@@ -29,15 +29,15 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#090d16" },
+    { media: "(prefers-color-scheme: light)", color: "#f0f2f7" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e0e10" },
   ],
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="bg-white text-slate-900 dark:bg-[#090d16] dark:text-slate-100 antialiased min-h-screen transition-colors duration-200">
+      <body className="bg-[#f0f2f7] text-[#0f172a] dark:bg-[#0e0e10] dark:text-[#f1f1f4] antialiased min-h-screen selection:bg-[#2563eb]/20 selection:text-[#2563eb] transition-colors duration-200">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

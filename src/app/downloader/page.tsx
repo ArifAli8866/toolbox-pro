@@ -111,7 +111,7 @@ export default function DownloaderPage() {
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Form Card */}
         <form onSubmit={handleSubmit}>
-          <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 shadow-xs">
+          <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 shadow-xs">
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1 relative">
                 <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
@@ -163,7 +163,7 @@ export default function DownloaderPage() {
 
         {/* Direct Link Found */}
         {result && result.type === 'direct' && (
-          <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-emerald-200 dark:border-emerald-900/60 p-6 sm:p-8 animate-slide-up shadow-sm space-y-4">
+          <div className="bg-white dark:bg-[#1e1e21] rounded-3xl border border-emerald-200 dark:border-emerald-900/60 p-6 sm:p-8 animate-slide-up shadow-sm space-y-4">
             <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
               <Check className="w-5 h-5" />
               <h3 className="font-bold text-base">Direct Media File Detected</h3>
