@@ -1,316 +1,556 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { ToastProvider } from '@/components/Toast';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import AppShell from '@/components/AppShell';
+import { useToast } from '@/components/Toast';
 import { compressImage, formatFileSize, CompressionResult } from '@/lib/imageCompressor';
 import { compressPDF } from '@/lib/pdfUtils';
 import { saveAs } from 'file-saver';
-import { Upload, Download, Zap, Sliders, Check, X, Loader2, FileImage, FileText, Minimize2 } from 'lucide-react';
+import { recordRecentTool } from '@/lib/personalization';
+import {
+  Upload,
+  Download,
+  Zap,
+  Sliders,
+  Check,
+  X,
+  Loader2,
+  FileImage,
+  FileText,
+  Lock,
+  Unlock,
+  Eye,
+  RefreshCw,
+  ArrowRight,
+  ShieldCheck,
+} from 'lucide-react';
 
 type CompressMode = 'image' | 'pdf';
 
-export default function CompressorPage() {
-  return (
-    <ToastProvider>
-      <CompressorContent />
-    </ToastProvider>
-  );
+interface DimensionPreset {
+  label: string;
+  width?: number;
+  height?: number;
 }
 
-function CompressorContent() {
+const presets: DimensionPreset[] = [
+  { label: 'Original' },
+  { label: '1080p FHD', width: 1920, height: 1080 },
+  { label: '720p HD', width: 1280, height: 720 },
+  { label: 'Square (1:1)', width: 1080, height: 1080 },
+  { label: 'Web Banner', width: 1200, height: 630 },
+];
+
+export default function CompressorPage() {
   const [mode, setMode] = useState<CompressMode>('image');
   const [file, setFile] = useState<File | null>(null);
+  const [originalPreview, setOriginalPreview] = useState<string | null>(null);
   const [compressing, setCompressing] = useState(false);
-  const [quality, setQuality] = useState(60);
+  const [quality, setQuality] = useState(75);
   const [maxWidth, setMaxWidth] = useState('');
   const [maxHeight, setMaxHeight] = useState('');
-  const [outputFormat, setOutputFormat] = useState<'jpeg' | 'png' | 'webp'>('jpeg');
-  const [results, setResults] = useState<CompressionResult | null>(null);
+  const [lockAspect, setLockAspect] = useState(true);
+  const [outputFormat, setOutputFormat] = useState<'jpeg' | 'png' | 'webp'>('webp');
+  const [result, setResult] = useState<CompressionResult | null>(null);
   const [pdfResult, setPdfResult] = useState<{ originalSize: number; compressedSize: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const toast = useToast();
 
-  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = e.target.files?.[0];
-    if (selected) {
-      setFile(selected);
-      setResults(null);
-      setPdfResult(null);
-      setError(null);
-    }
+  useEffect(() => {
+    recordRecentTool('compressor');
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setDragOver(false);
-    const dropped = e.dataTransfer.files?.[0];
-    if (dropped) {
-      setFile(dropped);
-      setResults(null);
-      setPdfResult(null);
+  // Cleanup object URLs when component unmounts or file changes
+  useEffect(() => {
+    return () => {
+      if (originalPreview) URL.revokeObjectURL(originalPreview);
+      if (result?.previewUrl) URL.revokeObjectURL(result.previewUrl);
+    };
+  }, [originalPreview, result]);
+
+  const handleFileSelect = useCallback(
+    (selectedFile: File) => {
       setError(null);
+      setResult(null);
+      setPdfResult(null);
+
+      if (mode === 'image' && !selectedFile.type.startsWith('image/')) {
+        setError('Please select a valid image file (JPEG, PNG, WEBP, GIF, BMP).');
+        return;
+      }
+      if (mode === 'pdf' && selectedFile.type !== 'application/pdf' && !selectedFile.name.endsWith('.pdf')) {
+        setError('Please select a valid PDF file.');
+        return;
+      }
+
+      setFile(selectedFile);
+
+      if (mode === 'image') {
+        if (originalPreview) URL.revokeObjectURL(originalPreview);
+        const url = URL.createObjectURL(selectedFile);
+        setOriginalPreview(url);
+      }
+    },
+    [mode, originalPreview]
+  );
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setDragOver(false);
+      const dropped = e.dataTransfer.files?.[0];
+      if (dropped) {
+        handleFileSelect(dropped);
+      }
+    },
+    [handleFileSelect]
+  );
+
+  const applyPreset = (preset: DimensionPreset) => {
+    if (!preset.width) {
+      setMaxWidth('');
+      setMaxHeight('');
+    } else {
+      setMaxWidth(String(preset.width));
+      setMaxHeight(String(preset.height));
     }
-  }, []);
+  };
 
   const handleCompress = async () => {
     if (!file) {
-      setError('Please select a file first');
+      setError('Please select a file to compress.');
       return;
     }
+
     setCompressing(true);
     setError(null);
-    
+
     try {
       if (mode === 'image') {
-        const result = await compressImage(file, {
+        const res = await compressImage(file, {
           quality: quality / 100,
-          maxWidth: maxWidth ? parseInt(maxWidth) : undefined,
-          maxHeight: maxHeight ? parseInt(maxHeight) : undefined,
+          maxWidth: maxWidth ? parseInt(maxWidth, 10) : undefined,
+          maxHeight: maxHeight ? parseInt(maxHeight, 10) : undefined,
           format: outputFormat,
+          maintainAspectRatio: lockAspect,
         });
-        setResults(result);
-        
-        const ext = outputFormat === 'jpeg' ? 'jpg' : outputFormat;
-        const name = file.name.replace(/\.[^.]+$/, '') + `_compressed.${ext}`;
-        saveAs(result.blob, name);
+
+        setResult(res);
+        toast.success(
+          res.reductionPercent > 0
+            ? `Reduced by ${res.reductionPercent}% (${formatFileSize(res.originalSize)} → ${formatFileSize(res.compressedSize)})`
+            : `Image optimized to ${formatFileSize(res.compressedSize)}`
+        );
       } else {
         const compressed = await compressPDF(file);
-        const compressedBlob = new Blob([new Uint8Array(compressed)], { type: 'application/pdf' });
+        const blob = new Blob([new Uint8Array(compressed)], { type: 'application/pdf' });
         const originalSize = file.size;
         const compressedSize = compressed.length;
         setPdfResult({ originalSize, compressedSize });
-        
-        saveAs(compressedBlob, file.name);
+
+        const name = file.name.replace(/\.pdf$/i, '') + '_optimized.pdf';
+        saveAs(blob, name);
+        toast.success(`PDF processed and downloaded: ${formatFileSize(compressedSize)}`);
       }
-    } catch (err: any) {
-      setError(err.message || 'Compression failed');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Compression failed';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setCompressing(false);
     }
   };
 
-  const reductionPercent = results ? results.reductionPercent : pdfResult ? ((pdfResult.originalSize - pdfResult.compressedSize) / pdfResult.originalSize) * 100 : 0;
+  const handleDownloadResult = () => {
+    if (!result || !file) return;
+    const ext = outputFormat === 'jpeg' ? 'jpg' : outputFormat;
+    const baseName = file.name.replace(/\.[^.]+$/, '');
+    const finalName = `${baseName}_compressed.${ext}`;
+    saveAs(result.blob, finalName);
+    toast.success('Downloaded compressed image!');
+  };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">File Compressor</h1>
-          <p className="text-slate-600">Reduce file sizes with adjustable quality. All processing happens locally.</p>
-        </div>
-
-        {/* Mode Toggle */}
-        <div className="flex justify-center mb-8">
-          <div className="inline-flex bg-slate-100 rounded-xl p-1">
+    <AppShell
+      breadcrumbs={[
+        { label: 'File & PDF', href: '/#category-file' },
+        { label: 'File Compressor' },
+      ]}
+      title="File Compressor"
+      subtitle="Reduce image and PDF file sizes with instant visual comparisons and granular quality controls."
+      badge="Client-Side"
+    >
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Mode Switcher */}
+        <div className="flex justify-center">
+          <div className="inline-flex bg-slate-100 dark:bg-slate-800/80 rounded-2xl p-1.5 border border-slate-200/80 dark:border-slate-700/80 shadow-xs">
             <button
-              onClick={() => { setMode('image'); setResults(null); setFile(null); }}
-              className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${
-                mode === 'image' ? 'bg-white shadow-md text-primary-600' : 'text-slate-600'
+              onClick={() => {
+                setMode('image');
+                setFile(null);
+                setResult(null);
+                setPdfResult(null);
+              }}
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                mode === 'image'
+                  ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-sm'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <FileImage className="w-4 h-4" />
-              Image
+              <span>Image Compressor</span>
             </button>
             <button
-              onClick={() => { setMode('pdf'); setPdfResult(null); setFile(null); }}
-              className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${
-                mode === 'pdf' ? 'bg-white shadow-md text-primary-600' : 'text-slate-600'
+              onClick={() => {
+                setMode('pdf');
+                setFile(null);
+                setResult(null);
+                setPdfResult(null);
+              }}
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                mode === 'pdf'
+                  ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-sm'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <FileText className="w-4 h-4" />
-              PDF
+              <span>PDF Optimizer</span>
             </button>
           </div>
         </div>
 
-        {/* Compression Controls (Image only) */}
+        {/* Compression Controls for Images */}
         {mode === 'image' && (
-          <div className="bg-white rounded-xl border border-slate-200 p-6 mb-6 space-y-6">
+          <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xs">
+            {/* Quality Slider */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold text-slate-800 flex items-center gap-2">
-                  <Sliders className="w-4 h-4" />
-                  Quality: {quality}%
-                </h3>
-                <span className={`text-sm font-semibold ${quality > 70 ? 'text-green-600' : quality > 40 ? 'text-yellow-600' : 'text-red-600'}`}>
-                  {quality > 70 ? 'High Quality' : quality > 40 ? 'Balanced' : 'Max Compression'}
+                <div className="flex items-center gap-2">
+                  <Sliders className="w-4 h-4 text-brand-500" />
+                  <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                    Target Quality: {quality}%
+                  </span>
+                </div>
+                <span
+                  className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                    quality >= 80
+                      ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400'
+                      : quality >= 50
+                      ? 'bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400'
+                      : 'bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400'
+                  }`}
+                >
+                  {quality >= 80 ? 'High Fidelity' : quality >= 50 ? 'Balanced' : 'Maximum Shrink'}
                 </span>
               </div>
               <input
                 type="range"
-                min={1}
-                max={100}
+                min={10}
+                max={98}
                 value={quality}
-                onChange={(e) => setQuality(parseInt(e.target.value))}
-                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
+                onChange={(e) => setQuality(parseInt(e.target.value, 10))}
+                className="w-full"
               />
+              <div className="flex justify-between text-[11px] text-slate-400 dark:text-slate-500 mt-1">
+                <span>Smallest size (10%)</span>
+                <span>Recommended (75%)</span>
+                <span>Lossless feel (98%)</span>
+              </div>
             </div>
 
+            {/* Dimension Presets & Custom Dimensions */}
             <div>
-              <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
-                <Minimize2 className="w-4 h-4" />
-                Max Dimensions (optional)
-              </h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                  Max Dimensions &amp; Presets
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setLockAspect(!lockAspect)}
+                  className={`inline-flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded-lg border transition-colors ${
+                    lockAspect
+                      ? 'bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 border-brand-200 dark:border-brand-800'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700'
+                  }`}
+                >
+                  {lockAspect ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
+                  <span>{lockAspect ? 'Aspect Ratio Locked' : 'Freeform Aspect'}</span>
+                </button>
+              </div>
+
+              {/* Presets */}
+              <div className="flex flex-wrap gap-2 mb-3">
+                {presets.map((p) => (
+                  <button
+                    key={p.label}
+                    type="button"
+                    onClick={() => applyPreset(p)}
+                    className="text-xs px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-sm text-slate-500 mb-1 block">Max Width (px)</label>
+                  <label className="text-xs text-slate-500 dark:text-slate-400 block mb-1">
+                    Max Width (px)
+                  </label>
                   <input
                     type="number"
                     value={maxWidth}
                     onChange={(e) => setMaxWidth(e.target.value)}
-                    placeholder="e.g. 1920"
-                    className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    placeholder="Auto (original)"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-xs focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
                 <div>
-                  <label className="text-sm text-slate-500 mb-1 block">Max Height (px)</label>
+                  <label className="text-xs text-slate-500 dark:text-slate-400 block mb-1">
+                    Max Height (px)
+                  </label>
                   <input
                     type="number"
                     value={maxHeight}
                     onChange={(e) => setMaxHeight(e.target.value)}
-                    placeholder="e.g. 1080"
-                    className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    placeholder="Auto (original)"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-xs focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
               </div>
             </div>
 
+            {/* Target Output Format */}
             <div>
-              <h3 className="font-semibold text-slate-800 mb-3">Output Format</h3>
-              <div className="flex gap-3">
-                {(['jpeg', 'png', 'webp'] as const).map((fmt) => (
+              <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block mb-2.5">
+                Output Format
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { id: 'webp' as const, label: 'WEBP', hint: 'Best web compression' },
+                  { id: 'jpeg' as const, label: 'JPEG', hint: 'Universal photos' },
+                  { id: 'png' as const, label: 'PNG', hint: 'Retains transparency' },
+                ].map((fmt) => (
                   <button
-                    key={fmt}
-                    onClick={() => setOutputFormat(fmt)}
-                    className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
-                      outputFormat === fmt
-                        ? 'bg-primary-600 text-white shadow-md'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    key={fmt.id}
+                    type="button"
+                    onClick={() => setOutputFormat(fmt.id)}
+                    className={`flex-1 min-w-[120px] p-2.5 rounded-xl border text-left transition-all ${
+                      outputFormat === fmt.id
+                        ? 'border-brand-500 bg-brand-50/70 dark:bg-brand-950/30 text-brand-900 dark:text-brand-200 shadow-xs ring-1 ring-brand-500'
+                        : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                     }`}
                   >
-                    {fmt.toUpperCase()}
+                    <div className="text-xs font-bold">{fmt.label}</div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400">{fmt.hint}</div>
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-slate-500 mt-2">
-                JPEG is best for photos. PNG for graphics with transparency. WEBP for best compression.
-              </p>
             </div>
           </div>
         )}
 
-        {/* Drop Zone */}
+        {/* Upload Drop Zone */}
         <div
-          onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragOver(true);
+          }}
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
-          className={`border-2 border-dashed rounded-2xl p-10 text-center transition-all cursor-pointer ${
-            dragOver ? 'border-primary-400 bg-primary-50' : 'border-slate-300 bg-white hover:border-slate-400'
+          onClick={() => fileInputRef.current?.click()}
+          className={`border-2 border-dashed rounded-3xl p-10 text-center transition-all cursor-pointer bg-white dark:bg-[#0f172a] ${
+            dragOver
+              ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-950/20'
+              : 'border-slate-200 dark:border-slate-800 hover:border-brand-300 dark:hover:border-brand-700'
           }`}
-          onClick={() => document.getElementById('compress-file-input')?.click()}
         >
           <input
-            id="compress-file-input"
+            ref={fileInputRef}
             type="file"
-            accept={mode === 'image' ? 'image/*' : '.pdf'}
-            onChange={handleFileSelect}
+            accept={mode === 'image' ? 'image/*' : '.pdf,application/pdf'}
+            onChange={(e) => e.target.files?.[0] && handleFileSelect(e.target.files[0])}
             className="hidden"
           />
-          <Upload className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-          <p className="text-lg font-semibold text-slate-700 mb-1">
-            {file ? file.name : 'Drop your file here or click to browse'}
+
+          <div className="w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 flex items-center justify-center mx-auto mb-4 shadow-xs">
+            <Upload className="w-6 h-6" />
+          </div>
+
+          <p className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-200 mb-1">
+            {file ? file.name : `Drop your ${mode === 'image' ? 'image' : 'PDF'} here or click to browse`}
           </p>
-          <p className="text-sm text-slate-500">
-            {file ? formatFileSize(file.size) : mode === 'image' ? 'PNG, JPG, WEBP, BMP, GIF' : 'PDF files'}
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            {file
+              ? `Original Size: ${formatFileSize(file.size)}`
+              : mode === 'image'
+              ? 'Supports PNG, JPEG, WEBP, BMP, GIF up to 200MB'
+              : 'Supports standard PDF documents up to 100MB'}
           </p>
         </div>
 
-        {/* Compress Button */}
-        <div className="mt-8 flex flex-col items-center gap-4">
+        {/* Action Button */}
+        <div className="flex flex-col items-center gap-4">
           <button
             onClick={handleCompress}
             disabled={!file || compressing}
-            className="px-10 py-3.5 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-lg shadow-green-500/25 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-green-500/40 hover:scale-105 transition-all flex items-center gap-2"
+            className="w-full sm:w-auto px-10 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-brand-600 hover:from-emerald-500 hover:to-brand-500 text-white font-bold text-sm shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
           >
             {compressing ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                Compressing...
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Optimizing Client-Side...</span>
               </>
             ) : (
               <>
-                <Zap className="w-5 h-5" />
-                Compress File
+                <Zap className="w-4 h-4" />
+                <span>Compress &amp; Optimize Now</span>
               </>
             )}
           </button>
 
           {error && (
-            <div className="flex items-center gap-2 text-red-600 bg-red-50 px-4 py-3 rounded-lg">
-              <X className="w-4 h-4" />
-              {error}
-            </div>
-          )}
-
-          {mode === 'image' && results && !error && (
-            <div className="w-full max-w-lg bg-white rounded-xl border border-slate-200 p-6 space-y-4">
-              <div className="flex items-center gap-2 text-green-700">
-                <Check className="w-5 h-5" />
-                <span className="font-semibold">Compression Complete!</span>
-              </div>
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-xs text-slate-500 mb-1">Original</div>
-                  <div className="font-semibold text-slate-800">{formatFileSize(results.originalSize)}</div>
-                </div>
-                <div>
-                  <div className="text-xs text-slate-500 mb-1">Compressed</div>
-                  <div className="font-semibold text-green-600">{formatFileSize(results.compressedSize)}</div>
-                </div>
-                <div>
-                  <div className="text-xs text-slate-500 mb-1">Reduced</div>
-                  <div className="font-bold text-primary-600 text-lg">{results.reductionPercent.toFixed(1)}%</div>
-                </div>
-              </div>
-              <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full transition-all"
-                  style={{ width: `${Math.min(100, reductionPercent)}%` }}
-                />
-              </div>
-            </div>
-          )}
-
-          {mode === 'pdf' && pdfResult && !error && (
-            <div className="w-full max-w-lg bg-white rounded-xl border border-slate-200 p-6 space-y-4">
-              <div className="flex items-center gap-2 text-green-700">
-                <Check className="w-5 h-5" />
-                <span className="font-semibold">PDF Compressed!</span>
-              </div>
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-xs text-slate-500 mb-1">Original</div>
-                  <div className="font-semibold text-slate-800">{formatFileSize(pdfResult.originalSize)}</div>
-                </div>
-                <div>
-                  <div className="text-xs text-slate-500 mb-1">Compressed</div>
-                  <div className="font-semibold text-green-600">{formatFileSize(pdfResult.compressedSize)}</div>
-                </div>
-                <div>
-                  <div className="text-xs text-slate-500 mb-1">Reduced</div>
-                  <div className="font-bold text-primary-600 text-lg">{reductionPercent.toFixed(1)}%</div>
-                </div>
-              </div>
+            <div className="flex items-center gap-2 text-xs font-semibold text-rose-600 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 px-4 py-2.5 rounded-xl">
+              <X className="w-4 h-4 flex-shrink-0" />
+              <span>{error}</span>
             </div>
           )}
         </div>
+
+        {/* Before and After Visual Comparison Results */}
+        {result && mode === 'image' && (
+          <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 space-y-6 animate-slide-up shadow-sm">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-2">
+                <Check className="w-5 h-5 text-emerald-500" />
+                <h3 className="font-bold text-base text-slate-900 dark:text-white">
+                  Compression Complete
+                </h3>
+              </div>
+              <button
+                onClick={handleDownloadResult}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm transition-all"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Download Result</span>
+              </button>
+            </div>
+
+            {/* Metrics Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 text-center">
+              <div>
+                <span className="text-[11px] text-slate-400 dark:text-slate-500 block mb-0.5">
+                  Original
+                </span>
+                <span className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                  {formatFileSize(result.originalSize)}
+                </span>
+                <span className="text-[10px] text-slate-400 block mt-0.5">
+                  {result.originalWidth} × {result.originalHeight}
+                </span>
+              </div>
+              <div>
+                <span className="text-[11px] text-slate-400 dark:text-slate-500 block mb-0.5">
+                  Compressed
+                </span>
+                <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                  {formatFileSize(result.compressedSize)}
+                </span>
+                <span className="text-[10px] text-slate-400 block mt-0.5">
+                  {result.outputWidth} × {result.outputHeight}
+                </span>
+              </div>
+              <div>
+                <span className="text-[11px] text-slate-400 dark:text-slate-500 block mb-0.5">
+                  Space Saved
+                </span>
+                <span className="text-sm font-bold text-brand-600 dark:text-brand-400">
+                  {result.reductionPercent}%
+                </span>
+                <span className="text-[10px] text-slate-400 block mt-0.5">
+                  -{formatFileSize(Math.max(0, result.originalSize - result.compressedSize))}
+                </span>
+              </div>
+              <div>
+                <span className="text-[11px] text-slate-400 dark:text-slate-500 block mb-0.5">
+                  Format
+                </span>
+                <span className="text-sm font-bold text-slate-800 dark:text-slate-200 uppercase">
+                  {outputFormat}
+                </span>
+                <span className="text-[10px] text-slate-400 block mt-0.5">
+                  {quality}% quality
+                </span>
+              </div>
+            </div>
+
+            {/* Side by Side Preview */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-slate-50 dark:bg-slate-900">
+                <div className="px-4 py-2 border-b border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center justify-between">
+                  <span>Before (Original)</span>
+                  <span>{formatFileSize(result.originalSize)}</span>
+                </div>
+                <div className="p-4 flex items-center justify-center min-h-[220px]">
+                  {originalPreview && (
+                    <img
+                      src={originalPreview}
+                      alt="Original image before compression"
+                      className="max-h-60 max-w-full rounded-lg object-contain shadow-xs"
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-emerald-200 dark:border-emerald-900/50 overflow-hidden bg-slate-50 dark:bg-slate-900">
+                <div className="px-4 py-2 border-b border-emerald-100 dark:border-emerald-900/50 text-xs font-semibold text-emerald-700 dark:text-emerald-400 flex items-center justify-between bg-emerald-50/50 dark:bg-emerald-950/20">
+                  <span>After (Optimized)</span>
+                  <span>{formatFileSize(result.compressedSize)}</span>
+                </div>
+                <div className="p-4 flex items-center justify-center min-h-[220px]">
+                  <img
+                    src={result.previewUrl}
+                    alt="Optimized compressed result"
+                    className="max-h-60 max-w-full rounded-lg object-contain shadow-xs"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* PDF Compression Result */}
+        {pdfResult && mode === 'pdf' && (
+          <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 space-y-4 animate-slide-up shadow-sm">
+            <div className="flex items-center gap-2 text-emerald-600">
+              <Check className="w-5 h-5" />
+              <h3 className="font-bold text-base">PDF Optimization Finished</h3>
+            </div>
+            <div className="grid grid-cols-3 gap-4 text-center p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
+              <div>
+                <span className="text-xs text-slate-400 block mb-1">Original Size</span>
+                <span className="font-bold text-slate-800 dark:text-slate-200">
+                  {formatFileSize(pdfResult.originalSize)}
+                </span>
+              </div>
+              <div>
+                <span className="text-xs text-slate-400 block mb-1">Optimized Size</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                  {formatFileSize(pdfResult.compressedSize)}
+                </span>
+              </div>
+              <div>
+                <span className="text-xs text-slate-400 block mb-1">Status</span>
+                <span className="font-bold text-brand-600 dark:text-brand-400">
+                  Downloaded
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-      
-      <Footer />
-    </div>
+    </AppShell>
   );
 }
