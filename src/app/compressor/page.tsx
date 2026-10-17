@@ -421,12 +421,12 @@ export default function CompressorPage() {
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Mode Switcher */}
         <div className="flex justify-center">
-          <div className="inline-flex bg-slate-100 dark:bg-slate-800/80 rounded-2xl p-1.5 border border-slate-200/80 dark:border-slate-700/80 shadow-xs">
+          <div className="inline-flex bg-slate-100/60 dark:bg-slate-800/80 rounded-full p-1 border border-slate-200/60 dark:border-slate-700/80 shadow-xs">
             <button
               onClick={() => {
                 setMode('image');
               }}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all ${
                 mode === 'image'
                   ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -444,7 +444,7 @@ export default function CompressorPage() {
               onClick={() => {
                 setMode('pdf');
               }}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all ${
                 mode === 'pdf'
                   ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -866,7 +866,7 @@ export default function CompressorPage() {
 
             {/* Before and After Visual Comparison Results for Active Selected Item */}
             {activeImage && activeImage.status === 'done' && activeImage.result && (
-              <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xs animate-slide-up">
+              <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-100 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-saas-card animate-slide-up">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
                   <div className="flex items-center gap-2.5">
                     <Check className="w-5 h-5 text-emerald-500 flex-shrink-0" />
@@ -889,7 +889,7 @@ export default function CompressorPage() {
                 </div>
 
                 {/* Metrics Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 text-center">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 text-center shadow-xs">
                   <div>
                     <span className="text-[11px] text-slate-400 dark:text-slate-500 block mb-0.5">
                       Original

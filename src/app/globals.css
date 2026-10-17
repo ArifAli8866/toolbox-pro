@@ -2,10 +2,10 @@
 
 @layer base {
   :root {
-    --bg-page: #f9fafb;
+    --bg-page: #ffffff;
     --bg-surface: #ffffff;
     --bg-surface-elevated: #ffffff;
-    --bg-surface-subtle: #f8fafc;
+    --bg-surface-subtle: #ffffff;
     --border-main: #f1f5f9;
     --border-hover: #e2e8f0;
     --text-primary: #09090b;
@@ -28,9 +28,7 @@
   }
 
   body {
-    background-color: var(--bg-page);
-    background-image: radial-gradient(ellipse 80% 500px at 50% -20px, rgba(99, 102, 241, 0.045), transparent 70%);
-    background-repeat: no-repeat;
+    background-color: #ffffff;
     color: var(--text-primary);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     transition: background-color 0.2s ease, color 0.2s ease;
@@ -38,6 +36,7 @@
   }
 
   .dark body {
+    background-color: #090d16;
     background-image: radial-gradient(ellipse 80% 500px at 50% -20px, rgba(99, 102, 241, 0.08), transparent 70%);
   }
 

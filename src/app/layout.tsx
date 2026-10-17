@@ -29,7 +29,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#090d16" },
   ],
 };
@@ -37,7 +37,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="bg-slate-50 text-slate-900 dark:bg-[#090d16] dark:text-slate-100 antialiased min-h-screen transition-colors duration-200">
+      <body className="bg-white text-slate-900 dark:bg-[#090d16] dark:text-slate-100 antialiased min-h-screen transition-colors duration-200">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

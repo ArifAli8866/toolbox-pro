@@ -326,7 +326,7 @@ export default function HomePage() {
 
             {/* 3 Metric Summary Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6">
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
+              <div className="p-4 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 shadow-xs">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                     Processing Mode
@@ -339,7 +339,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
+              <div className="p-4 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 shadow-xs">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                     Network Latency
@@ -352,7 +352,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
+              <div className="p-4 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 shadow-xs">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                     Tools Available
@@ -571,7 +571,7 @@ export default function HomePage() {
             return (
               <div
                 key={i}
-                className="bg-slate-50/70 dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 text-center"
+                className="bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 text-center shadow-xs"
               >
                 <div className="w-11 h-11 rounded-2xl bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-400 flex items-center justify-center mx-auto mb-4 shadow-saas-pill">
                   <Icon className="w-5 h-5" />

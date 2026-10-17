@@ -513,7 +513,7 @@ export default function ConverterPage() {
                 className={`p-4 rounded-2xl border text-left transition-all ${
                   isSelected
                     ? 'border-brand-500 bg-brand-50/80 dark:bg-brand-950/40 shadow-sm ring-1 ring-brand-500'
-                    : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-[#0f172a] hover:border-slate-300 dark:hover:border-slate-700'
+                    : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-[#0f172a] shadow-saas-card hover:border-slate-200 dark:hover:border-slate-700'
                 }`}
               >
                 <Icon
@@ -827,7 +827,7 @@ export default function ConverterPage() {
               {queue.map((item, index) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between gap-3 p-3 rounded-2xl bg-white dark:bg-[#0f172a] border border-slate-200/90 dark:border-slate-800 shadow-xs hover:border-brand-200 dark:hover:border-brand-900 transition-colors"
+                  className="flex items-center justify-between gap-3 p-3 rounded-2xl bg-white dark:bg-[#0f172a] border border-slate-100 dark:border-slate-800 shadow-xs hover:border-slate-200 dark:hover:border-slate-700 transition-colors"
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     {/* Mode specific badge / page indicator */}

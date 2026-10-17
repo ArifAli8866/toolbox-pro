@@ -95,7 +95,7 @@ export default function AppShell({
 
   return (
     <ToastProvider>
-      <div className="min-h-screen bg-slate-50 dark:bg-[#090d16] text-slate-900 dark:text-slate-100 flex flex-col antialiased">
+      <div className="min-h-screen bg-white dark:bg-[#090d16] text-slate-900 dark:text-slate-100 flex flex-col antialiased">
         {/* Left Sidebar */}
         <Sidebar
           collapsed={collapsed}
