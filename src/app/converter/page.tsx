@@ -1,33 +1,67 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { ToastProvider } from '@/components/Toast';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import AppShell from '@/components/AppShell';
+import { useToast } from '@/components/Toast';
 import { convertImage, ImageFormat, getExtensionFromFormat } from '@/lib/imageConverter';
 import { formatFileSize } from '@/lib/imageCompressor';
-import { mergePDFs, extractPDFPages, splitPDF, rotatePDFPages, compressPDF, getPDFPageCount } from '@/lib/pdfUtils';
-import { imageToPdf } from '@/lib/pdfConverter';
+import {
+  mergePDFs,
+  extractPDFPages,
+  splitPDF,
+  rotatePDFPages,
+  getPDFPageCount,
+} from '@/lib/pdfUtils';
+import { imageToPdf, imagesToPdf, pdfToImages } from '@/lib/pdfConverter';
 import { saveAs } from 'file-saver';
-import { Upload, Download, FileText, Image, ArrowLeftRight, Layers, Scissors, RotateCw, FileMinus, Loader2, X, Check, Lock } from 'lucide-react';
+import { recordRecentTool } from '@/lib/personalization';
+import {
+  Upload,
+  Download,
+  FileText,
+  Image as ImageIcon,
+  ArrowLeftRight,
+  Layers,
+  Scissors,
+  RotateCw,
+  FileMinus,
+  Loader2,
+  X,
+  Check,
+  Lock,
+  FileArchive,
+  Trash2,
+} from 'lucide-react';
 
-type ConversionMode = 'image' | 'pdf-merge' | 'pdf-split' | 'pdf-extract' | 'pdf-rotate' | 'pdf-compress' | 'image-to-pdf' | 'pdf-password';
+type ConversionMode =
+  | 'image'
+  | 'image-to-pdf'
+  | 'pdf-to-image'
+  | 'pdf-merge'
+  | 'pdf-extract'
+  | 'pdf-split'
+  | 'pdf-rotate'
+  | 'pdf-password';
+
+const modes = [
+  { id: 'image' as const, icon: ImageIcon, label: 'Image Format', desc: 'PNG, JPG, WEBP, BMP, GIF' },
+  { id: 'image-to-pdf' as const, icon: FileText, label: 'Images → PDF', desc: 'Combine photos into a document' },
+  { id: 'pdf-to-image' as const, icon: ImageIcon, label: 'PDF → Images', desc: 'Extract pages as crisp PNGs' },
+  { id: 'pdf-merge' as const, icon: Layers, label: 'Merge PDFs', desc: 'Combine multiple documents' },
+  { id: 'pdf-extract' as const, icon: Scissors, label: 'Extract Pages', desc: 'Extract page range' },
+  { id: 'pdf-split' as const, icon: FileMinus, label: 'Split PDF', desc: 'Split into separate files' },
+  { id: 'pdf-rotate' as const, icon: RotateCw, label: 'Rotate Pages', desc: '90°, 180°, 270° orientation' },
+  { id: 'pdf-password' as const, icon: Lock, label: 'Encrypt PDF', desc: '256-bit AES password lock' },
+];
+
+const imageFormats: ImageFormat[] = ['png', 'jpeg', 'webp', 'bmp', 'gif'];
 
 export default function ConverterPage() {
-  return (
-    <ToastProvider>
-      <ConverterContent />
-    </ToastProvider>
-  );
-}
-
-function ConverterContent() {
   const [mode, setMode] = useState<ConversionMode>('image');
   const [files, setFiles] = useState<File[]>([]);
   const [converting, setConverting] = useState(false);
-  const [result, setResult] = useState<{ name: string; size: number } | null>(null);
+  const [result, setResult] = useState<{ name: string; size: number; count?: number } | null>(null);
   const [targetFormat, setTargetFormat] = useState<ImageFormat>('png');
-  const [pdfQuality, setPdfQuality] = useState(0.92);
   const [extractStart, setExtractStart] = useState(1);
   const [extractEnd, setExtractEnd] = useState(1);
   const [rotation, setRotation] = useState(90);
@@ -35,159 +69,238 @@ function ConverterContent() {
   const [pdfPassword, setPdfPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const toast = useToast();
 
-  const imageFormats: ImageFormat[] = ['png', 'jpeg', 'webp', 'bmp', 'gif'];
+  useEffect(() => {
+    recordRecentTool('converter');
+  }, []);
 
-  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = Array.from(e.target.files || []);
-    setError(null);
+  const handleFilesSelect = useCallback(
+    (selectedFiles: File[]) => {
+      setError(null);
+      setResult(null);
+
+      if (selectedFiles.length === 0) return;
+
+      if (mode === 'image') {
+        const valid = selectedFiles.filter((f) => f.type.startsWith('image/'));
+        if (valid.length === 0) {
+          setError('Please select valid image files.');
+          return;
+        }
+        setFiles(valid.slice(0, 1));
+      } else if (mode === 'image-to-pdf') {
+        const valid = selectedFiles.filter((f) => f.type.startsWith('image/'));
+        if (valid.length === 0) {
+          setError('Please select image files to convert to PDF.');
+          return;
+        }
+        setFiles(valid);
+      } else {
+        // PDF modes
+        const valid = selectedFiles.filter(
+          (f) => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf')
+        );
+        if (valid.length === 0) {
+          setError('Please select valid PDF documents.');
+          return;
+        }
+
+        if (mode === 'pdf-merge') {
+          setFiles((prev) => [...prev, ...valid]);
+        } else {
+          setFiles(valid.slice(0, 1));
+          getPDFPageCount(valid[0])
+            .then((count) => {
+              setPdfPageCount(count);
+              setExtractStart(1);
+              setExtractEnd(Math.min(count, 5));
+            })
+            .catch(() => setPdfPageCount(null));
+        }
+      }
+    },
+    [mode]
+  );
+
+  const removeFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
     setResult(null);
-    
-    if (mode === 'image' || mode === 'image-to-pdf') {
-      setFiles(selected.slice(0, 1));
-    } else {
-      setFiles(selected);
-    }
-    
-    if (selected.length > 0 && selected[0].type === 'application/pdf') {
-      getPDFPageCount(selected[0]).then(count => setPdfPageCount(count)).catch(() => setPdfPageCount(null));
-    }
-  }, [mode]);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setDragOver(false);
-    const dropped = Array.from(e.dataTransfer.files);
-    setError(null);
-    setResult(null);
-    
-    if (mode === 'image' || mode === 'image-to-pdf') {
-      setFiles(dropped.slice(0, 1));
-    } else {
-      setFiles(dropped);
-    }
-    
-    if (dropped.length > 0 && dropped[0].type === 'application/pdf') {
-      getPDFPageCount(dropped[0]).then(count => setPdfPageCount(count)).catch(() => setPdfPageCount(null));
-    }
-  }, [mode]);
+  };
 
   const handleConvert = async () => {
     if (files.length === 0) {
-      setError('Please select files first');
+      setError('Please select files first.');
       return;
     }
+
     setConverting(true);
     setError(null);
     setResult(null);
-    
+
     try {
-      const uint8ToBlob = (u8: Uint8Array, type: string) => new Blob([new Uint8Array(u8)], { type });
-      
+      const uint8ToBlob = (u8: Uint8Array, type: string) =>
+        new Blob([new Uint8Array(u8)], { type });
+
       if (mode === 'image') {
-        const converted = await convertImage(files[0], targetFormat, pdfQuality);
+        const converted = await convertImage(files[0], targetFormat, 0.95);
         const ext = getExtensionFromFormat(targetFormat);
         const name = files[0].name.replace(/\.[^.]+$/, '') + `.${ext}`;
         saveAs(converted, name);
         setResult({ name, size: converted.size });
+        toast.success(`Converted ${files[0].name} to ${name}!`);
       } else if (mode === 'image-to-pdf') {
-        const pdfBytes = await imageToPdf(files[0]);
-        const name = files[0].name.replace(/\.[^.]+$/, '') + '.pdf';
-        saveAs(uint8ToBlob(pdfBytes, 'application/pdf'), name);
-        setResult({ name, size: pdfBytes.length });
+        const pdfBytes = await imagesToPdf(files);
+        const name =
+          files.length === 1
+            ? files[0].name.replace(/\.[^.]+$/, '') + '.pdf'
+            : 'images_document.pdf';
+        const blob = uint8ToBlob(pdfBytes, 'application/pdf');
+        saveAs(blob, name);
+        setResult({ name, size: pdfBytes.length, count: files.length });
+        toast.success(`Generated PDF with ${files.length} pages!`);
+      } else if (mode === 'pdf-to-image') {
+        const blobs = await pdfToImages(files[0], 'png', 30);
+        blobs.forEach((blob, idx) => {
+          setTimeout(() => {
+            saveAs(blob, `${files[0].name.replace(/\.pdf$/i, '')}_page_${idx + 1}.png`);
+          }, idx * 150);
+        });
+        setResult({
+          name: `${blobs.length} page images`,
+          size: blobs.reduce((acc, b) => acc + b.size, 0),
+          count: blobs.length,
+        });
+        toast.success(`Extracted ${blobs.length} pages as PNG!`);
       } else if (mode === 'pdf-merge') {
+        if (files.length < 2) {
+          setError('Please select at least 2 PDF files to merge.');
+          setConverting(false);
+          return;
+        }
         const merged = await mergePDFs(files);
-        saveAs(uint8ToBlob(merged, 'application/pdf'), 'merged.pdf');
-        setResult({ name: 'merged.pdf', size: merged.length });
+        const name = 'merged_document.pdf';
+        saveAs(uint8ToBlob(merged, 'application/pdf'), name);
+        setResult({ name, size: merged.length, count: files.length });
+        toast.success(`Merged ${files.length} PDFs into one document!`);
       } else if (mode === 'pdf-extract') {
         const extracted = await extractPDFPages(files[0], extractStart, extractEnd);
-        saveAs(uint8ToBlob(extracted, 'application/pdf'), `pages_${extractStart}-${extractEnd}.pdf`);
-        setResult({ name: `pages_${extractStart}-${extractEnd}.pdf`, size: extracted.length });
+        const name = `${files[0].name.replace(/\.pdf$/i, '')}_p${extractStart}-p${extractEnd}.pdf`;
+        saveAs(uint8ToBlob(extracted, 'application/pdf'), name);
+        setResult({ name, size: extracted.length });
+        toast.success(`Extracted pages ${extractStart} to ${extractEnd}!`);
       } else if (mode === 'pdf-split') {
         const pages = await splitPDF(files[0]);
-        pages.forEach((page, i) => {
+        pages.forEach((page, idx) => {
           setTimeout(() => {
-            saveAs(uint8ToBlob(page, 'application/pdf'), `page_${i + 1}.pdf`);
-          }, i * 200);
+            saveAs(uint8ToBlob(page, 'application/pdf'), `page_${idx + 1}.pdf`);
+          }, idx * 150);
         });
-        setResult({ name: `${pages.length} individual PDFs`, size: pages.reduce((a, b) => a + b.length, 0) });
+        setResult({
+          name: `${pages.length} separate PDF pages`,
+          size: pages.reduce((a, b) => a + b.length, 0),
+          count: pages.length,
+        });
+        toast.success(`Split PDF into ${pages.length} documents!`);
       } else if (mode === 'pdf-rotate') {
         const rotated = await rotatePDFPages(files[0], rotation);
-        saveAs(uint8ToBlob(rotated, 'application/pdf'), 'rotated.pdf');
-        setResult({ name: 'rotated.pdf', size: rotated.length });
-      } else if (mode === 'pdf-compress') {
-        const compressed = await compressPDF(files[0]);
-        saveAs(uint8ToBlob(compressed, 'application/pdf'), files[0].name);
-        setResult({ name: files[0].name, size: compressed.length });
+        const name = `${files[0].name.replace(/\.pdf$/i, '')}_rotated_${rotation}deg.pdf`;
+        saveAs(uint8ToBlob(rotated, 'application/pdf'), name);
+        setResult({ name, size: rotated.length });
+        toast.success(`Rotated all pages by ${rotation}°!`);
       } else if (mode === 'pdf-password') {
-        if (!pdfPassword) { setError('Please enter a password'); setConverting(false); return; }
+        if (!pdfPassword.trim()) {
+          setError('Please enter a password to encrypt the PDF.');
+          setConverting(false);
+          return;
+        }
         const { encryptPDF } = await import('@pdfsmaller/pdf-encrypt-lite');
         const pdfBytes = new Uint8Array(await files[0].arrayBuffer());
         const encryptedBytes = await encryptPDF(pdfBytes, pdfPassword);
-        const name = files[0].name.replace(/\.[^.]+$/, '') + '_protected.pdf';
+        const name = files[0].name.replace(/\.pdf$/i, '') + '_protected.pdf';
         saveAs(uint8ToBlob(encryptedBytes as Uint8Array, 'application/pdf'), name);
         setResult({ name, size: (encryptedBytes as Uint8Array).length });
+        toast.success('PDF encrypted with 256-bit AES protection!');
       }
-    } catch (err: any) {
-      setError(err.message || 'Conversion failed');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Conversion failed';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setConverting(false);
     }
   };
 
-  const modes = [
-    { id: 'image' as const, icon: Image, label: 'Image Format', desc: 'Convert between image formats' },
-    { id: 'image-to-pdf' as const, icon: FileText, label: 'Image → PDF', desc: 'Convert image to PDF' },
-    { id: 'pdf-merge' as const, icon: Layers, label: 'Merge PDFs', desc: 'Combine multiple PDFs' },
-    { id: 'pdf-extract' as const, icon: Scissors, label: 'Extract Pages', desc: 'Extract specific pages' },
-    { id: 'pdf-split' as const, icon: FileMinus, label: 'Split PDF', desc: 'Split into individual pages' },
-    { id: 'pdf-rotate' as const, icon: RotateCw, label: 'Rotate PDF', desc: 'Rotate all pages' },
-    { id: 'pdf-compress' as const, icon: ArrowLeftRight, label: 'Optimize PDF', desc: 'Re-compress PDF' },
-    { id: 'pdf-password' as const, icon: Lock, label: 'Protect PDF', desc: 'Add password encryption' },
-  ];
-
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">File Converter</h1>
-          <p className="text-slate-600">Convert images, merge PDFs, split pages, and more — all in your browser.</p>
+    <AppShell
+      breadcrumbs={[
+        { label: 'File & PDF', href: '/#category-file' },
+        { label: 'File Converter' },
+      ]}
+      title="Universal File Converter"
+      subtitle="Convert formats, merge multi-page documents, extract pages, and password-lock PDFs with zero server uploads."
+      badge="Client-Side"
+    >
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Mode Selector Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {modes.map((m) => {
+            const Icon = m.icon;
+            const isSelected = mode === m.id;
+            return (
+              <button
+                key={m.id}
+                type="button"
+                onClick={() => {
+                  setMode(m.id);
+                  setFiles([]);
+                  setResult(null);
+                  setError(null);
+                  setPdfPageCount(null);
+                }}
+                className={`p-4 rounded-2xl border text-left transition-all ${
+                  isSelected
+                    ? 'border-brand-500 bg-brand-50/80 dark:bg-brand-950/40 shadow-sm ring-1 ring-brand-500'
+                    : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] hover:border-slate-300 dark:hover:border-slate-700'
+                }`}
+              >
+                <Icon
+                  className={`w-5 h-5 mb-2 ${
+                    isSelected ? 'text-brand-600 dark:text-brand-400' : 'text-slate-400 dark:text-slate-500'
+                  }`}
+                />
+                <div
+                  className={`text-xs sm:text-sm font-bold ${
+                    isSelected ? 'text-brand-900 dark:text-brand-100' : 'text-slate-800 dark:text-slate-200'
+                  }`}
+                >
+                  {m.label}
+                </div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                  {m.desc}
+                </div>
+              </button>
+            );
+          })}
         </div>
 
-        {/* Mode Selector */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-          {modes.map((m) => (
-            <button
-              key={m.id}
-              onClick={() => { setMode(m.id); setFiles([]); setResult(null); setError(null); }}
-              className={`p-4 rounded-xl border-2 text-left transition-all ${
-                mode === m.id
-                  ? 'border-primary-500 bg-primary-50 shadow-md'
-                  : 'border-slate-200 bg-white hover:border-slate-300'
-              }`}
-            >
-              <m.icon className={`w-5 h-5 mb-2 ${mode === m.id ? 'text-primary-600' : 'text-slate-500'}`} />
-              <div className={`text-sm font-semibold ${mode === m.id ? 'text-primary-700' : 'text-slate-700'}`}>{m.label}</div>
-              <div className="text-xs text-slate-500 mt-0.5">{m.desc}</div>
-            </button>
-          ))}
-        </div>
-
-        {/* Conversion Options */}
+        {/* Dynamic Mode Settings */}
         {mode === 'image' && (
-          <div className="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-            <h3 className="font-semibold text-slate-800 mb-4">Output Format</h3>
-            <div className="flex flex-wrap gap-3">
+          <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs">
+            <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block mb-3">
+              Choose Target Output Format
+            </span>
+            <div className="flex flex-wrap gap-2">
               {imageFormats.map((fmt) => (
                 <button
                   key={fmt}
+                  type="button"
                   onClick={() => setTargetFormat(fmt)}
-                  className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                  className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                     targetFormat === fmt
-                      ? 'bg-primary-600 text-white shadow-md'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      ? 'bg-brand-600 text-white shadow-xs'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                   }`}
                 >
                   {getExtensionFromFormat(fmt).toUpperCase()}
@@ -198,50 +311,60 @@ function ConverterContent() {
         )}
 
         {mode === 'pdf-extract' && pdfPageCount && (
-          <div className="bg-white rounded-xl border border-slate-200 p-6 mb-6 grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-medium text-slate-600 mb-1 block">Start Page</label>
-              <input
-                type="number"
-                min={1}
-                max={pdfPageCount}
-                value={extractStart}
-                onChange={(e) => setExtractStart(Math.max(1, parseInt(e.target.value) || 1))}
-                className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-              />
+          <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-4">
+            <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">
+              Page Range Selection (Document has {pdfPageCount} pages)
+            </span>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs text-slate-500 block mb-1">From Page</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={pdfPageCount}
+                  value={extractStart}
+                  onChange={(e) => setExtractStart(Math.max(1, parseInt(e.target.value, 10) || 1))}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-semibold focus:ring-2 focus:ring-brand-500"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-slate-500 block mb-1">To Page</label>
+                <input
+                  type="number"
+                  min={extractStart}
+                  max={pdfPageCount}
+                  value={extractEnd}
+                  onChange={(e) =>
+                    setExtractEnd(Math.min(pdfPageCount, parseInt(e.target.value, 10) || extractStart))
+                  }
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-semibold focus:ring-2 focus:ring-brand-500"
+                />
+              </div>
             </div>
-            <div>
-              <label className="text-sm font-medium text-slate-600 mb-1 block">End Page</label>
-              <input
-                type="number"
-                min={extractStart}
-                max={pdfPageCount}
-                value={extractEnd}
-                onChange={(e) => setExtractEnd(Math.min(pdfPageCount, parseInt(e.target.value) || extractStart))}
-                className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-              />
-            </div>
-            <div className="col-span-2 text-sm text-slate-500">
-              PDF has {pdfPageCount} pages. Extracting pages {extractStart}–{Math.min(extractEnd, pdfPageCount)}.
-            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Extracting pages {extractStart} to {extractEnd} into a standalone PDF.
+            </p>
           </div>
         )}
 
         {mode === 'pdf-rotate' && (
-          <div className="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-            <h3 className="font-semibold text-slate-800 mb-4">Rotation Angle</h3>
-            <div className="flex gap-3">
+          <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-3">
+            <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">
+              Rotation Degree
+            </span>
+            <div className="flex gap-2">
               {[90, 180, 270].map((deg) => (
                 <button
                   key={deg}
+                  type="button"
                   onClick={() => setRotation(deg)}
-                  className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                  className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                     rotation === deg
-                      ? 'bg-primary-600 text-white shadow-md'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      ? 'bg-brand-600 text-white shadow-xs'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
                   }`}
                 >
-                  {deg}°
+                  +{deg}° Clockwise
                 </button>
               ))}
             </div>
@@ -249,108 +372,157 @@ function ConverterContent() {
         )}
 
         {mode === 'pdf-password' && (
-          <div className="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-            <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
-              <Lock className="w-4 h-4" /> Password Protection
-            </h3>
+          <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-3">
+            <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">
+              Set Document Protection Password
+            </span>
             <input
               type="text"
               value={pdfPassword}
               onChange={(e) => setPdfPassword(e.target.value)}
-              placeholder="Enter a password..."
-              className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              placeholder="Enter secure password..."
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-brand-500"
             />
-            <p className="text-xs text-slate-500 mt-2">
-              Uses 256-bit AES encryption. Anyone opening the PDF will need this password.
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              Uses AES-256 military-grade encryption. PDF viewers will prompt for this key on opening.
             </p>
           </div>
         )}
 
-        {/* Drop Zone */}
+        {/* File Drop Zone */}
         <div
-          onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragOver(true);
+          }}
           onDragLeave={() => setDragOver(false)}
-          onDrop={handleDrop}
-          className={`border-2 border-dashed rounded-2xl p-10 text-center transition-all cursor-pointer ${
+          onDrop={(e) => {
+            e.preventDefault();
+            setDragOver(false);
+            if (e.dataTransfer.files) {
+              handleFilesSelect(Array.from(e.dataTransfer.files));
+            }
+          }}
+          onClick={() => fileInputRef.current?.click()}
+          className={`border-2 border-dashed rounded-3xl p-10 text-center transition-all cursor-pointer bg-white dark:bg-[#0f172a] ${
             dragOver
-              ? 'border-primary-400 bg-primary-50'
-              : 'border-slate-300 bg-white hover:border-slate-400'
+              ? 'border-brand-500 bg-brand-50/40 dark:bg-brand-950/20'
+              : 'border-slate-200 dark:border-slate-800 hover:border-brand-300 dark:hover:border-brand-700'
           }`}
-          onClick={() => document.getElementById('file-input')?.click()}
         >
           <input
-            id="file-input"
+            ref={fileInputRef}
             type="file"
-            multiple={mode !== 'image' && mode !== 'image-to-pdf'}
-            accept={mode.startsWith('pdf') ? '.pdf' : 'image/*'}
-            onChange={handleFileSelect}
+            multiple={mode === 'pdf-merge' || mode === 'image-to-pdf'}
+            accept={mode === 'image' || mode === 'image-to-pdf' ? 'image/*' : '.pdf,application/pdf'}
+            onChange={(e) => e.target.files && handleFilesSelect(Array.from(e.target.files))}
             className="hidden"
           />
-          <Upload className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-          <p className="text-lg font-semibold text-slate-700 mb-1">
-            {files.length > 0 ? `${files.length} file${files.length > 1 ? 's' : ''} selected` : 'Drop files here or click to browse'}
+
+          <div className="w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 flex items-center justify-center mx-auto mb-4 shadow-xs">
+            <Upload className="w-6 h-6" />
+          </div>
+
+          <p className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-200 mb-1">
+            {files.length > 0
+              ? `${files.length} file${files.length > 1 ? 's' : ''} loaded`
+              : 'Drop your files here or click to browse'}
           </p>
-          <p className="text-sm text-slate-500">
-            {mode.startsWith('pdf') ? 'PDF files' : 'Image files (PNG, JPG, WEBP, BMP, GIF)'}
-            {mode === 'pdf-merge' ? ' (select 2 or more)' : ''}
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            {mode === 'image'
+              ? 'PNG, JPG, WEBP, BMP, GIF'
+              : mode === 'image-to-pdf'
+              ? 'Select multiple photos to merge into a single PDF'
+              : mode === 'pdf-merge'
+              ? 'Select 2 or more PDFs to combine'
+              : 'Upload a PDF document'}
           </p>
         </div>
 
-        {/* File List */}
+        {/* Selected Files List */}
         {files.length > 0 && (
-          <div className="mt-6 space-y-2">
-            {files.slice(0, 10).map((file, i) => (
-              <div key={i} className="flex items-center justify-between bg-white rounded-lg border border-slate-200 px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <FileText className="w-5 h-5 text-slate-400" />
-                  <div>
-                    <div className="text-sm font-medium text-slate-700 truncate max-w-[300px]">{file.name}</div>
-                    <div className="text-xs text-slate-500">{formatFileSize(file.size)}</div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                Selected Files ({files.length})
+              </span>
+              {files.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => setFiles([])}
+                  className="text-xs text-rose-500 hover:text-rose-600 font-semibold"
+                >
+                  Clear All
+                </button>
+              )}
+            </div>
+
+            <div className="max-h-60 overflow-y-auto space-y-2 pr-1">
+              {files.map((file, i) => (
+                <div
+                  key={`${file.name}-${i}`}
+                  className="flex items-center justify-between p-3 rounded-2xl bg-white dark:bg-[#0f172a] border border-slate-200/80 dark:border-slate-800 shadow-xs"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <FileText className="w-4 h-4 text-brand-500 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate max-w-sm">
+                        {file.name}
+                      </p>
+                      <span className="text-[11px] text-slate-400">{formatFileSize(file.size)}</span>
+                    </div>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => removeFile(i)}
+                    className="p-1 rounded text-slate-400 hover:text-rose-500"
+                    aria-label={`Remove ${file.name}`}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-                <Check className="w-5 h-5 text-green-500" />
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
 
-        {/* Convert Button */}
-        <div className="mt-8 flex flex-col items-center gap-4">
+        {/* Convert Action Button */}
+        <div className="flex flex-col items-center gap-4">
           <button
             onClick={handleConvert}
             disabled={files.length === 0 || converting}
-            className="px-10 py-3.5 rounded-xl bg-gradient-to-r from-primary-600 to-purple-600 text-white font-semibold shadow-lg shadow-primary-500/25 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-primary-500/40 hover:scale-105 transition-all flex items-center gap-2"
+            className="w-full sm:w-auto px-10 py-3.5 rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 hover:from-brand-500 hover:to-purple-500 text-white font-bold text-sm shadow-lg shadow-brand-500/20 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
           >
             {converting ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                Processing...
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Processing Client-Side...</span>
               </>
             ) : (
               <>
-                <ArrowLeftRight className="w-5 h-5" />
-                Convert {files.length > 0 ? `(${files.length} file${files.length > 1 ? 's' : ''})` : ''}
+                <ArrowLeftRight className="w-4 h-4" />
+                <span>Convert &amp; Process ({files.length} file{files.length === 1 ? '' : 's'})</span>
               </>
             )}
           </button>
 
           {error && (
-            <div className="flex items-center gap-2 text-red-600 bg-red-50 px-4 py-3 rounded-lg">
-              <X className="w-4 h-4" />
-              {error}
+            <div className="flex items-center gap-2 text-xs font-semibold text-rose-600 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 px-4 py-2.5 rounded-xl">
+              <X className="w-4 h-4 flex-shrink-0" />
+              <span>{error}</span>
             </div>
           )}
 
           {result && !error && (
-            <div className="flex items-center gap-2 text-green-700 bg-green-50 px-4 py-3 rounded-lg">
-              <Check className="w-4 h-4" />
-              Converted successfully! {result.name} ({formatFileSize(result.size)}) — Downloaded automatically.
+            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-5 py-3 rounded-2xl animate-slide-up">
+              <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+              <span>
+                Success! Generated {result.name} ({formatFileSize(result.size)}) — downloaded automatically.
+              </span>
             </div>
           )}
         </div>
       </div>
-      
-      <Footer />
-    </div>
+    </AppShell>
   );
 }
