@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -60,6 +60,15 @@ export default function Sidebar({
   recentCount = 0,
 }: SidebarProps) {
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCloseMobile();
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [mobileOpen, onCloseMobile]);
 
   const renderContent = (isMobile = false) => {
     const isCollapsed = !isMobile && collapsed;
@@ -258,6 +267,7 @@ export default function Sidebar({
     <>
       {/* Desktop Sidebar */}
       <aside
+        aria-label="Desktop Navigation"
         className={`hidden md:block fixed inset-y-0 left-0 z-30 transition-all duration-300 ${
           collapsed ? 'w-20' : 'w-64'
         }`}
@@ -267,7 +277,12 @@ export default function Sidebar({
 
       {/* Mobile Drawer Overlay */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mobile Navigation Drawer"
+          className="fixed inset-0 z-50 md:hidden"
+        >
           <div
             className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
             onClick={onCloseMobile}

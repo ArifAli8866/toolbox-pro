@@ -30,17 +30,18 @@ export default function MoreToolsPage() {
   );
 }
 
+const VALID_TABS: MoreToolTab[] = ['favicon', 'batch', 'screenshot', 'currency', 'markdown', 'history'];
+
 function MoreToolsContent() {
   const searchParams = useSearchParams();
   const requestedTool = searchParams.get('tool') as MoreToolTab | null;
 
-  const validTabs: MoreToolTab[] = ['favicon', 'batch', 'screenshot', 'currency', 'markdown', 'history'];
-  const initialTab: MoreToolTab = requestedTool && validTabs.includes(requestedTool) ? requestedTool : 'favicon';
+  const initialTab: MoreToolTab = requestedTool && VALID_TABS.includes(requestedTool) ? requestedTool : 'favicon';
 
   const [activeTab, setActiveTab] = useState<MoreToolTab>(initialTab);
 
   useEffect(() => {
-    if (requestedTool && validTabs.includes(requestedTool)) {
+    if (requestedTool && VALID_TABS.includes(requestedTool)) {
       setActiveTab(requestedTool);
     }
   }, [requestedTool]);
@@ -719,6 +720,16 @@ function ScreenshotGeneratorTool() {
   );
 }
 
+// Unit categories
+const UNIT_CATEGORIES = {
+  length: { label: 'Length', units: { Meter: 1, Kilometer: 1000, Centimeter: 0.01, Millimeter: 0.001, Mile: 1609.34, Yard: 0.9144, Foot: 0.3048, Inch: 0.0254 } },
+  weight: { label: 'Weight', units: { Gram: 1, Kilogram: 1000, Milligram: 0.001, Pound: 453.592, Ounce: 28.3495, Tonne: 1000000 } },
+  temperature: { label: 'Temperature', units: { Celsius: 1, Fahrenheit: 1, Kelvin: 1 } },
+  area: { label: 'Area', units: { 'Sq Meter': 1, 'Sq Kilometer': 1000000, 'Sq Foot': 0.092903, Acre: 4046.86, Hectare: 10000 } },
+  volume: { label: 'Volume', units: { Liter: 1, Milliliter: 0.001, Gallon: 3.78541, Cup: 0.236588, 'Cubic Meter': 1000 } },
+  speed: { label: 'Speed', units: { 'm/s': 1, 'km/h': 0.277778, 'mph': 0.44704, 'knot': 0.514444 } },
+} as const;
+
 // ==========================================
 // 4. CURRENCY & UNIT CONVERTER TOOL
 // ==========================================
@@ -763,31 +774,21 @@ function CurrencyUnitConverterTool() {
     return (usd * rates[toCur]).toFixed(2);
   }, [curAmount, fromCur, toCur, rates]);
 
-  // Unit categories
-  const unitCategories = {
-    length: { label: 'Length', units: { Meter: 1, Kilometer: 1000, Centimeter: 0.01, Millimeter: 0.001, Mile: 1609.34, Yard: 0.9144, Foot: 0.3048, Inch: 0.0254 } },
-    weight: { label: 'Weight', units: { Gram: 1, Kilogram: 1000, Milligram: 0.001, Pound: 453.592, Ounce: 28.3495, Tonne: 1000000 } },
-    temperature: { label: 'Temperature', units: { Celsius: 1, Fahrenheit: 1, Kelvin: 1 } },
-    area: { label: 'Area', units: { 'Sq Meter': 1, 'Sq Kilometer': 1000000, 'Sq Foot': 0.092903, Acre: 4046.86, Hectare: 10000 } },
-    volume: { label: 'Volume', units: { Liter: 1, Milliliter: 0.001, Gallon: 3.78541, Cup: 0.236588, 'Cubic Meter': 1000 } },
-    speed: { label: 'Speed', units: { 'm/s': 1, 'km/h': 0.277778, 'mph': 0.44704, 'knot': 0.514444 } },
-  } as const;
-
-  const [cat, setCat] = useState<keyof typeof unitCategories>('length');
+  const [cat, setCat] = useState<keyof typeof UNIT_CATEGORIES>('length');
   const [fromUnit, setFromUnit] = useState('Kilometer');
   const [toUnit, setToUnit] = useState('Mile');
   const [unitAmount, setUnitAmount] = useState('1');
 
-  const switchCategory = (c: keyof typeof unitCategories) => {
+  const switchCategory = (c: keyof typeof UNIT_CATEGORIES) => {
     setCat(c);
-    const keys = Object.keys(unitCategories[c].units);
+    const keys = Object.keys(UNIT_CATEGORIES[c].units);
     setFromUnit(keys[0]);
     setToUnit(keys[1] || keys[0]);
   };
 
   const unitResult = useMemo(() => {
     const amt = parseFloat(unitAmount) || 0;
-    const category = unitCategories[cat];
+    const category = UNIT_CATEGORIES[cat];
     if (cat === 'temperature') {
       let celsius: number;
       if (fromUnit === 'Celsius') celsius = amt;
@@ -890,19 +891,22 @@ function CurrencyUnitConverterTool() {
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-5">
           <h3 className="font-semibold text-slate-900 dark:text-slate-100">Unit Converter</h3>
           <div className="flex flex-wrap gap-2">
-            {Object.entries(unitCategories).map(([key, val]) => (
-              <button
-                key={key}
-                onClick={() => switchCategory(key as keyof typeof unitCategories)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  cat === key
-                    ? 'bg-brand-600 text-white shadow'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-                }`}
-              >
-                {val.label}
-              </button>
-            ))}
+            {(Object.keys(UNIT_CATEGORIES) as Array<keyof typeof UNIT_CATEGORIES>).map((key) => {
+              const val = UNIT_CATEGORIES[key];
+              return (
+                <button
+                  key={key}
+                  onClick={() => switchCategory(key)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    cat === key
+                      ? 'bg-brand-600 text-white shadow'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                  }`}
+                >
+                  {val.label}
+                </button>
+              );
+            })}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -919,7 +923,7 @@ function CurrencyUnitConverterTool() {
                 onChange={(e) => setFromUnit(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-brand-500"
               >
-                {Object.keys(unitCategories[cat].units).map((u) => (
+                {Object.keys(UNIT_CATEGORIES[cat].units).map((u) => (
                   <option key={u} value={u}>{u}</option>
                 ))}
               </select>
@@ -937,7 +941,7 @@ function CurrencyUnitConverterTool() {
                 onChange={(e) => setToUnit(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-brand-500"
               >
-                {Object.keys(unitCategories[cat].units).map((u) => (
+                {Object.keys(UNIT_CATEGORIES[cat].units).map((u) => (
                   <option key={u} value={u}>{u}</option>
                 ))}
               </select>

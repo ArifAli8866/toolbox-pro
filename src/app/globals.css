@@ -32,6 +32,12 @@
     color: var(--text-primary);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     transition: background-color 0.2s ease, color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
   }
 }
 

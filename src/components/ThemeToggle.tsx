@@ -35,8 +35,13 @@ export default function ThemeToggle() {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-36 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl z-50 animate-slide-up text-xs font-medium">
+        <div
+          role="menu"
+          aria-label="Select color theme"
+          className="absolute right-0 mt-2 w-36 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl z-50 animate-slide-up text-xs font-medium"
+        >
           <button
+            role="menuitem"
             onClick={() => {
               setTheme('light');
               setOpen(false);
@@ -52,6 +57,7 @@ export default function ThemeToggle() {
           </button>
 
           <button
+            role="menuitem"
             onClick={() => {
               setTheme('dark');
               setOpen(false);
@@ -67,6 +73,7 @@ export default function ThemeToggle() {
           </button>
 
           <button
+            role="menuitem"
             onClick={() => {
               setTheme('system');
               setOpen(false);
