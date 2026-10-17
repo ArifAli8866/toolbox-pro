@@ -84,7 +84,7 @@ export default function ToolCard({
 
   return (
     <div
-      className={`group relative flex flex-col justify-between bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs hover:shadow-xl hover:shadow-brand-500/5 dark:hover:shadow-brand-500/10 hover:border-brand-200 dark:hover:border-brand-900/60 hover:-translate-y-1 transition-all duration-300 ${
+      className={`group relative flex flex-col justify-between bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-100 dark:border-slate-800 p-6 shadow-saas-card hover:shadow-saas-hover hover:border-slate-200 dark:hover:border-slate-700 hover:-translate-y-1 transition-all duration-300 ${
         featured ? 'ring-1 ring-brand-500/20 bg-gradient-to-b from-white to-brand-50/20 dark:from-[#0f172a] dark:to-brand-950/20' : ''
       }`}
     >
@@ -92,7 +92,7 @@ export default function ToolCard({
         {/* Card Header: Icon, Badges, and Star */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <div
-            className={`w-12 h-12 rounded-xl bg-gradient-to-tr ${tool.gradient} flex items-center justify-center text-white shadow-md shadow-brand-500/15 group-hover:scale-105 transition-transform flex-shrink-0`}
+            className={`w-12 h-12 rounded-2xl bg-gradient-to-tr ${tool.gradient} flex items-center justify-center text-white shadow-md shadow-brand-500/15 group-hover:scale-105 transition-transform flex-shrink-0`}
           >
             <Icon className="w-6 h-6" />
           </div>

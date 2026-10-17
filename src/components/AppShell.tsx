@@ -123,7 +123,7 @@ export default function AppShell({
 
           {/* Optional Consistent Page Header */}
           {title && (
-            <div className="mx-3 sm:mx-6 lg:mx-8 mt-4 rounded-2xl bg-white/70 dark:bg-[#0c1322]/70 border border-slate-200/90 dark:border-slate-800/80 px-5 sm:px-8 py-5 shadow-xs">
+            <div className="mx-3 sm:mx-6 lg:mx-8 mt-4 rounded-3xl bg-white/90 dark:bg-[#0c1322]/90 border border-slate-200/70 dark:border-slate-800/80 px-6 sm:px-8 py-5 shadow-saas-card">
               <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2.5 mb-1">

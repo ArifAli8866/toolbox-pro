@@ -74,9 +74,9 @@ export default function Sidebar({
     const isCollapsed = !isMobile && collapsed;
 
     return (
-      <div className="flex flex-col h-full bg-white dark:bg-[#0c1322] md:rounded-2xl border border-slate-200/90 dark:border-slate-800/90 shadow-sm transition-all duration-300 overflow-hidden">
+      <div className="flex flex-col h-full bg-white dark:bg-[#0c1322] md:rounded-3xl border border-slate-200/80 dark:border-slate-800/80 shadow-saas-card transition-all duration-300 overflow-hidden">
         {/* Brand Header */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 dark:border-slate-800/80">
+        <div className="h-16 flex items-center justify-between px-5 border-b border-slate-100 dark:border-slate-800/70">
           <Link
             href="/"
             onClick={() => isMobile && onCloseMobile()}
@@ -109,8 +109,8 @@ export default function Sidebar({
         </div>
 
         {/* Quick Tools Access Bar */}
-        <div className="px-3 py-3 border-b border-slate-100 dark:border-slate-800/50">
-          <div className="flex items-center gap-1.5 p-1 bg-slate-100/70 dark:bg-slate-900/50 rounded-xl border border-slate-200/60 dark:border-slate-800/50">
+        <div className="px-3.5 py-3 border-b border-slate-100 dark:border-slate-800/50">
+          <div className="flex items-center gap-1.5 p-1 bg-slate-100/70 dark:bg-slate-900/50 rounded-2xl border border-slate-200/60 dark:border-slate-800/50">
             <Link
               href="/#favorites"
               onClick={() => isMobile && onCloseMobile()}
@@ -229,9 +229,9 @@ export default function Sidebar({
         </div>
 
         {/* Footer info & collapse toggle */}
-        <div className="p-3 border-t border-slate-200/80 dark:border-slate-800/80">
+        <div className="p-3 border-t border-slate-100 dark:border-slate-800/80">
           {!isCollapsed && (
-            <div className="mb-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/50 dark:border-slate-800/60">
+            <div className="mb-2 p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800/60">
               <div className="flex items-center gap-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 mb-0.5">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>100% In-Browser</span>

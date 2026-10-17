@@ -15,11 +15,17 @@ import {
   Star,
   Clock,
   ArrowRight,
-  CheckCircle2,
   ChevronDown,
   Lock,
-  Workflow,
   Wrench,
+  Check,
+  AlertCircle,
+  FileText,
+  Minimize2,
+  ScanText,
+  Activity,
+  HardDrive,
+  CheckCircle2,
 } from 'lucide-react';
 
 const stats = [
@@ -27,25 +33,101 @@ const stats = [
     icon: Shield,
     value: '100% Private',
     label: 'Zero server uploads',
-    desc: 'All file processing runs locally inside your browser memory.',
+    desc: 'All file processing runs locally inside your browser memory with WebAssembly.',
   },
   {
     icon: Zap,
     value: '0ms Transfer',
     label: 'Instant execution',
-    desc: 'No uploading or downloading to third-party cloud servers.',
+    desc: 'Zero upload or download network lag to third-party cloud servers.',
   },
   {
     icon: Cpu,
     value: '24+ Utilities',
     label: 'Production-ready tools',
-    desc: 'From PDF manipulation to Web Crypto & AI neural nets.',
+    desc: 'From multi-page PDF generation to client-side ML neural networks.',
   },
   {
     icon: Layers,
     value: 'Free Forever',
-    label: 'No subscriptions',
-    desc: 'No credit cards, accounts, watermarks, or artificial limits.',
+    label: 'Zero subscriptions',
+    desc: 'No credit cards, accounts, watermarks, or artificial daily quotas.',
+  },
+];
+
+const painPoints = [
+  {
+    icon: AlertCircle,
+    title: 'Too Many Shady Sites',
+    subtitle: 'Ad-infested & queue throttling',
+    desc: 'Legacy online converters force 30-second timers, limit batch sizes, and bombard you with intrusive popup ads.',
+  },
+  {
+    icon: Lock,
+    title: 'Zero Privacy Clarity',
+    subtitle: 'Uncontrolled cloud uploads',
+    desc: 'Sending confidential financial records, client contracts, or private photos to third-party cloud servers is a major risk.',
+  },
+  {
+    icon: Activity,
+    title: 'Slow Upload Latency',
+    subtitle: 'Bandwidth bottlenecks',
+    desc: 'Uploading 100MB+ images or multi-page documents crawls on mobile or remote Wi-Fi, wasting hours of productive time.',
+  },
+];
+
+const pricingTiers = [
+  {
+    name: 'Community',
+    badge: 'Standard',
+    price: 'Free',
+    period: '/ forever',
+    desc: 'For developers, students, and creators who need fast everyday tools.',
+    buttonText: 'Start Converting Now',
+    buttonHref: '/converter',
+    popular: false,
+    features: [
+      'All 24+ In-Browser Utilities',
+      'Unlimited Multi-File Batch Queues',
+      'Zero Server Uploads & Total Privacy',
+      'Full Dark & Light SaaS Modes',
+      'Zero Ads, Watermarks, or Quotas',
+    ],
+  },
+  {
+    name: 'Pro Developer',
+    badge: 'Popular',
+    price: '$0',
+    period: '/ open-source',
+    desc: 'For power users, designers, and software engineers who build daily.',
+    buttonText: 'Open Developer Tools',
+    buttonHref: '/text-tools',
+    popular: true,
+    features: [
+      'Everything in Community',
+      'Client-Side Neural AI OCR & Background Removal',
+      'Ordered Multi-Image to PDF Engine',
+      'Offline PWA & Local Storage State',
+      'Web Crypto & JWT Inspector',
+    ],
+  },
+  {
+    name: 'Enterprise Teams',
+    badge: 'Self-Hostable',
+    price: 'Free',
+    period: '/ MIT License',
+    desc: 'For organizations and internal security-first engineering workflows.',
+    buttonText: 'View on GitHub',
+    buttonHref: 'https://github.com/ArifAli8866/toolbox-pro',
+    popular: false,
+    external: true,
+    features: [
+      'Air-Gapped & Offline Ready',
+      'Zero Network Telemetry on Files',
+      'Docker & Static CDN Deployable',
+      'Permissive Open-Source License',
+      'Community Pull Requests Welcome',
+    ],
   },
 ];
 
@@ -142,34 +224,50 @@ export default function HomePage() {
   return (
     <AppShell>
       {/* ===== HERO SECTION ===== */}
-      <section className="relative pt-6 pb-12 sm:pt-10 sm:pb-16 overflow-hidden">
-        {/* Ambient background glows */}
-        <div className="absolute top-0 left-1/3 w-96 h-96 bg-brand-400/10 dark:bg-brand-500/10 rounded-full blur-3xl -z-10 pointer-events-none" />
-        <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-purple-400/10 dark:bg-purple-500/10 rounded-full blur-3xl -z-10 pointer-events-none" />
+      <section className="relative pt-6 pb-10 sm:pt-12 sm:pb-16 overflow-hidden">
+        {/* Soft atmospheric ambient glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-b from-brand-400/10 via-purple-400/5 to-transparent rounded-full blur-3xl -z-10 pointer-events-none" />
 
         <div className="max-w-4xl mx-auto text-center">
           {/* Pill Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-50 dark:bg-brand-950/60 border border-brand-200/80 dark:border-brand-800/80 text-brand-700 dark:text-brand-300 text-xs font-semibold mb-6 shadow-xs animate-fade-in">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>24+ High-Performance In-Browser Utilities</span>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-saas-pill text-xs font-semibold text-slate-800 dark:text-slate-200 mb-6 animate-fade-in">
+            <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse" />
+            <span>Client-Side Architecture • 24+ Production Utilities • 100% Private</span>
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.15] mb-5">
-            Every File &amp; Developer Tool,
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-950 dark:text-white leading-[1.12] mb-5">
+            The Next-Gen SaaS Utility
             <br />
             <span className="bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Processed Locally in Your Browser.
+              Command Center.
             </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8 leading-relaxed">
-            Convert formats, compress media, inspect tokens, and run machine learning models with zero server uploads, zero wait queues, and total privacy.
+          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8 leading-relaxed font-normal">
+            Convert, compress, manipulate PDFs, inspect tokens, and run on-device AI models with zero server uploads, zero wait queues, and total data privacy.
           </p>
 
+          {/* Dual SaaS Call-to-Action Buttons */}
+          <div className="flex items-center justify-center gap-3.5 mb-10 flex-wrap">
+            <Link
+              href="/converter"
+              className="px-7 py-3.5 rounded-full bg-[#18181b] hover:bg-black dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-bold text-sm shadow-saas-btn hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
+            >
+              <span>Get Started Free</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <a
+              href="#tools-catalog"
+              className="px-7 py-3.5 rounded-full bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/90 dark:border-slate-800 font-semibold text-sm shadow-saas-pill transition-all"
+            >
+              Explore All 24 Tools
+            </a>
+          </div>
+
           {/* Hero Search Bar */}
-          <div className="max-w-2xl mx-auto mb-8">
+          <div className="max-w-2xl mx-auto mb-10">
             <div className="relative flex items-center">
               <Search className="absolute left-4 w-5 h-5 text-slate-400 dark:text-slate-500 pointer-events-none" />
               <input
@@ -177,7 +275,7 @@ export default function HomePage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Find a tool (e.g. compress pdf, json formatter, background remover, jwt)..."
-                className="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 shadow-lg shadow-black/5 dark:shadow-black/20 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all"
+                className="w-full pl-12 pr-10 py-3.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 shadow-saas-pill focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all"
               />
               {searchQuery && (
                 <button
@@ -190,41 +288,139 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Category Filter Pills */}
-          <div className="flex items-center justify-center flex-wrap gap-2">
-            <button
-              onClick={() => setSelectedCategory('all')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-                selectedCategory === 'all'
-                  ? 'bg-brand-600 text-white shadow-sm'
-                  : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
-              }`}
-            >
-              All Utilities ({ALL_TOOLS.length})
-            </button>
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-                  selectedCategory === cat.id
-                    ? 'bg-brand-600 text-white shadow-sm'
-                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
-                }`}
-              >
-                {cat.label} ({cat.count})
-              </button>
-            ))}
+          {/* Live Command Center Preview Showcase Card (Directly inspired by reference screenshots) */}
+          <div className="rounded-3xl bg-white dark:bg-[#0c1322] border border-slate-200/80 dark:border-slate-800 shadow-saas-card p-6 sm:p-8 text-left transition-all">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                    Client Engine Active
+                  </h3>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                    v2.5 Modern
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  Ready to process documents, photos, tokens, and code directly inside browser RAM.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/converter"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold transition-colors"
+                >
+                  <FileText className="w-3.5 h-3.5 text-brand-500" />
+                  <span>Batch Converter</span>
+                </Link>
+                <Link
+                  href="/compressor"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold transition-colors"
+                >
+                  <Minimize2 className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>Compressor</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* 3 Metric Summary Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6">
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    Processing Mode
+                  </span>
+                  <HardDrive className="w-4 h-4 text-brand-500" />
+                </div>
+                <div className="text-xl font-bold text-slate-900 dark:text-white">100% Client-Side</div>
+                <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium mt-0.5">
+                  ✓ Zero bytes sent to cloud
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    Network Latency
+                  </span>
+                  <Zap className="w-4 h-4 text-amber-500" />
+                </div>
+                <div className="text-xl font-bold text-slate-900 dark:text-white">0ms Server Lag</div>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  Instant HTML5 &amp; WASM execution
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    Tools Available
+                  </span>
+                  <Sparkles className="w-4 h-4 text-purple-500" />
+                </div>
+                <div className="text-xl font-bold text-slate-900 dark:text-white">24 Utilities</div>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  Multi-file queue &amp; ZIP exports
+                </p>
+              </div>
+            </div>
           </div>
+        </div>
+      </section>
+
+      {/* ===== WHY DEVELOPERS CHOOSE CLIENT-SIDE SECTION (Inspired by reference download.webp) ===== */}
+      <section className="mb-20 max-w-5xl mx-auto">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-saas-pill text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-3">
+            <span>Problem vs Solution</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Why Teams Avoid Legacy Cloud Converters
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-xl mx-auto">
+            Built for founders, engineers, and creators who need speed and clarity without trusting remote servers.
+          </p>
+        </div>
+
+        {/* 3 Problem Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          {painPoints.map((item, idx) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={idx}
+                className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-saas-card hover:shadow-saas-hover hover:-translate-y-1 transition-all"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 flex items-center justify-center mb-5">
+                  <Icon className="w-6 h-6 text-brand-600 dark:text-brand-400" />
+                </div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white mb-1">
+                  {item.title}
+                </h3>
+                <div className="text-xs font-semibold text-brand-600 dark:text-brand-400 mb-2">
+                  {item.subtitle}
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Full-width Capsule Solution Banner (Directly from reference download.webp) */}
+        <div className="rounded-2xl bg-white dark:bg-[#0f172a] border border-slate-200/80 dark:border-slate-800 py-3.5 px-6 text-center text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 shadow-saas-pill max-w-3xl mx-auto">
+          With <span className="font-bold text-brand-600 dark:text-brand-400">ToolBox Pro</span>, your files are processed directly in browser RAM with HTML5 Canvas &amp; WASM. Zero uploads, zero telemetry, and instant results.
         </div>
       </section>
 
       {/* ===== FAVORITES & RECENT SECTION ===== */}
       {(favoriteToolItems.length > 0 || recentToolItems.length > 0) && (
-        <section className="mb-12 space-y-8">
+        <section className="mb-14 space-y-8">
           {favoriteToolItems.length > 0 && (
-            <div id="favorites" className="bg-white/60 dark:bg-slate-900/60 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 p-6">
-              <div className="flex items-center justify-between mb-4">
+            <div id="favorites" className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-100 dark:border-slate-800 p-6 sm:p-8 shadow-saas-card">
+              <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
                   <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
                   <h2 className="text-base font-bold text-slate-900 dark:text-white">
@@ -232,7 +428,7 @@ export default function HomePage() {
                   </h2>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                 {favoriteToolItems.map((tool) => (
                   <ToolCard
                     key={tool.id}
@@ -246,8 +442,8 @@ export default function HomePage() {
           )}
 
           {recentToolItems.length > 0 && (
-            <div id="recent" className="bg-white/60 dark:bg-slate-900/60 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 p-6">
-              <div className="flex items-center justify-between mb-4">
+            <div id="recent" className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-100 dark:border-slate-800 p-6 sm:p-8 shadow-saas-card">
+              <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-brand-500" />
                   <h2 className="text-base font-bold text-slate-900 dark:text-white">
@@ -256,12 +452,12 @@ export default function HomePage() {
                 </div>
                 <button
                   onClick={clearRecent}
-                  className="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 font-medium"
+                  className="text-xs text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 font-medium"
                 >
                   Clear History
                 </button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                 {recentToolItems.map((tool) => (
                   <ToolCard
                     key={tool.id}
@@ -277,17 +473,47 @@ export default function HomePage() {
       )}
 
       {/* ===== TOOLS DIRECTORY GRID ===== */}
-      <section className="mb-16">
-        <div className="flex items-center justify-between mb-6">
+      <section id="tools-catalog" className="mb-20 scroll-mt-24">
+        <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4 mb-8">
           <div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-saas-pill text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              <span>Catalog</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               {selectedCategory === 'all'
-                ? 'All Tools Catalog'
+                ? 'All Utilities Catalog'
                 : CATEGORIES.find((c) => c.id === selectedCategory)?.label || 'Tools'}
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Showing {filteredTools.length} {filteredTools.length === 1 ? 'utility' : 'utilities'}
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+              Showing {filteredTools.length} {filteredTools.length === 1 ? 'utility' : 'utilities'} with local browser processing
             </p>
+          </div>
+
+          {/* Category Filter Pills (Rounded full SaaS styling) */}
+          <div className="flex items-center flex-wrap gap-2">
+            <button
+              onClick={() => setSelectedCategory('all')}
+              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                selectedCategory === 'all'
+                  ? 'bg-[#18181b] dark:bg-white text-white dark:text-slate-900 shadow-saas-btn'
+                  : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-saas-pill'
+              }`}
+            >
+              All ({ALL_TOOLS.length})
+            </button>
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  selectedCategory === cat.id
+                    ? 'bg-[#18181b] dark:bg-white text-white dark:text-slate-900 shadow-saas-btn'
+                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-saas-pill'
+                }`}
+              >
+                {cat.label} ({cat.count})
+              </button>
+            ))}
           </div>
         </div>
 
@@ -303,7 +529,7 @@ export default function HomePage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8">
+          <div className="text-center py-16 bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-saas-card">
             <Search className="w-10 h-10 text-slate-400 dark:text-slate-500 mx-auto mb-3" />
             <h3 className="text-base font-bold text-slate-800 dark:text-slate-200 mb-1">
               No matching tools found
@@ -316,7 +542,7 @@ export default function HomePage() {
                 setSearchQuery('');
                 setSelectedCategory('all');
               }}
-              className="px-4 py-2 rounded-xl bg-brand-600 text-white text-xs font-semibold hover:bg-brand-700 transition-colors"
+              className="px-5 py-2.5 rounded-full bg-[#18181b] text-white text-xs font-bold shadow-saas-btn hover:bg-black transition-colors"
             >
               Reset Filters
             </button>
@@ -324,18 +550,18 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* ===== STATS / ARCHITECTURE SECTION ===== */}
-      <section className="mb-16 py-12 px-6 sm:px-10 rounded-3xl bg-gradient-to-b from-slate-100/80 to-white dark:from-slate-900/80 dark:to-[#0c1322] border border-slate-200/80 dark:border-slate-800/80">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-xs font-semibold mb-3 border border-emerald-200 dark:border-emerald-800">
-            <Lock className="w-3.5 h-3.5" />
-            <span>Architecture &amp; Privacy First</span>
+      {/* ===== ARCHITECTURE & PRINCIPLES SECTION (Inspired by VinoMa reference) ===== */}
+      <section className="mb-20 py-12 px-6 sm:px-10 rounded-3xl bg-white dark:bg-[#0c1322] border border-slate-100 dark:border-slate-800 shadow-saas-card">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-saas-pill text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-3">
+            <Shield className="w-3.5 h-3.5 text-emerald-500" />
+            <span>Architecture &amp; Principles</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Designed for Speed, Engineered for Privacy
+            Engineered for Maximum Speed &amp; Total Privacy
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2">
-            No telemetry on your files. No cloud uploads. Pure client-side computation.
+            No file telemetry. No cloud databases. Pure, high-performance client computation.
           </p>
         </div>
 
@@ -345,12 +571,12 @@ export default function HomePage() {
             return (
               <div
                 key={i}
-                className="bg-white dark:bg-slate-800/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 p-6 text-center shadow-xs"
+                className="bg-slate-50/70 dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 text-center"
               >
-                <div className="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/80 text-brand-600 dark:text-brand-400 flex items-center justify-center mx-auto mb-4">
+                <div className="w-11 h-11 rounded-2xl bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-400 flex items-center justify-center mx-auto mb-4 shadow-saas-pill">
                   <Icon className="w-5 h-5" />
                 </div>
-                <div className="text-xl font-extrabold text-slate-900 dark:text-white mb-1">
+                <div className="text-xl font-black text-slate-950 dark:text-white mb-1">
                   {stat.value}
                 </div>
                 <div className="text-xs font-semibold text-brand-600 dark:text-brand-400 mb-2">
@@ -365,10 +591,104 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ===== TRANSPARENT PRICING / PLANS SECTION (Directly inspired by reference download (2).webp) ===== */}
+      <section className="mb-20 max-w-5xl mx-auto">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-saas-pill text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-3">
+            <span>Pricing</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Transparent, Open &amp; 100% Free Forever
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-xl mx-auto">
+            No credit cards, no tier upgrades, and no artificial daily conversion limits.
+          </p>
+        </div>
+
+        {/* 3 Pricing Cards matching reference layout */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {pricingTiers.map((tier, idx) => (
+            <div
+              key={idx}
+              className={`relative bg-white dark:bg-[#0f172a] rounded-3xl border p-8 flex flex-col justify-between shadow-saas-card hover:shadow-saas-hover transition-all ${
+                tier.popular
+                  ? 'border-brand-500/80 ring-2 ring-brand-500/20'
+                  : 'border-slate-100 dark:border-slate-800'
+              }`}
+            >
+              {tier.popular && (
+                <div className="absolute -top-3.5 right-6 px-3 py-0.5 rounded-full bg-brand-600 text-white text-[11px] font-bold shadow-md shadow-brand-500/30 rotate-2">
+                  Most Popular
+                </div>
+              )}
+
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-800 dark:text-slate-200">
+                    <Wrench className="w-5 h-5 text-brand-600 dark:text-brand-400" />
+                  </div>
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                    {tier.badge}
+                  </span>
+                </div>
+
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">
+                  {tier.name}
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 min-h-[36px]">
+                  {tier.desc}
+                </p>
+
+                <div className="flex items-baseline gap-1.5 mb-6">
+                  <span className="text-3xl font-black text-slate-950 dark:text-white">
+                    {tier.price}
+                  </span>
+                  <span className="text-xs font-semibold text-slate-400">
+                    {tier.period}
+                  </span>
+                </div>
+
+                {/* Checklist */}
+                <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800 mb-8">
+                  {tier.features.map((feat, fIdx) => (
+                    <div key={fIdx} className="flex items-start gap-2.5 text-xs text-slate-600 dark:text-slate-300">
+                      <Check className="w-4 h-4 text-brand-600 dark:text-brand-400 flex-shrink-0 mt-0.5" />
+                      <span>{feat}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action Button matching reference download (2).webp */}
+              {tier.external ? (
+                <a
+                  href={tier.buttonHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 rounded-2xl bg-[#18181b] hover:bg-black text-white text-xs font-bold text-center shadow-saas-btn transition-all"
+                >
+                  {tier.buttonText}
+                </a>
+              ) : (
+                <Link
+                  href={tier.buttonHref}
+                  className="w-full py-3 rounded-2xl bg-[#18181b] hover:bg-black text-white text-xs font-bold text-center shadow-saas-btn transition-all"
+                >
+                  {tier.buttonText}
+                </Link>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* ===== FREQUENTLY ASKED QUESTIONS ===== */}
-      <section className="mb-16 max-w-3xl mx-auto">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+      <section className="mb-20 max-w-3xl mx-auto">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-saas-pill text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-3">
+            <span>FAQ</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Frequently Asked Questions
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
@@ -376,20 +696,20 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-3.5">
           {faqs.map((faq, i) => {
             const isOpen = Boolean(faqOpen[i]);
             return (
               <div
                 key={i}
-                className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 overflow-hidden transition-all"
+                className="bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-100 dark:border-slate-800 shadow-saas-card overflow-hidden transition-all"
               >
                 <button
                   type="button"
                   onClick={() => setFaqOpen((prev) => ({ ...prev, [i]: !prev[i] }))}
                   className="w-full flex items-center justify-between px-6 py-4 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 >
-                  <span className="font-semibold text-xs sm:text-sm text-slate-900 dark:text-white">
+                  <span className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
                     {faq.q}
                   </span>
                   <ChevronDown
@@ -409,7 +729,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== BOTTOM CTA ===== */}
+      {/* ===== BOTTOM CTA BANNER ===== */}
       <section className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 p-8 sm:p-12 text-center text-white mb-8 shadow-xl shadow-brand-500/10">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-3">
@@ -421,14 +741,14 @@ export default function HomePage() {
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/converter"
-              className="px-6 py-3 rounded-xl bg-white text-brand-700 font-bold text-xs sm:text-sm hover:bg-brand-50 shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
+              className="px-7 py-3.5 rounded-full bg-white text-slate-900 font-bold text-xs sm:text-sm shadow-saas-btn hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
             >
               <span>Open File Converter</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/text-tools"
-              className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm backdrop-blur-sm border border-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="px-7 py-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm backdrop-blur-sm border border-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
               Developer Tools
             </Link>
